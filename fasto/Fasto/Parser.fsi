@@ -39,6 +39,7 @@ type token =
   | THEN of (Position)
   | TRUE of (Position)
   | FALSE of (Position)
+  | INEG of (Position)
   | ID of (string * Position)
   | STRINGLIT of (string * Position)
   | CHARLIT of (char * Position)
@@ -82,6 +83,7 @@ type tokenId =
     | TOKEN_THEN
     | TOKEN_TRUE
     | TOKEN_FALSE
+    | TOKEN_INEG
     | TOKEN_ID
     | TOKEN_STRINGLIT
     | TOKEN_CHARLIT

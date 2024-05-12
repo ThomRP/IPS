@@ -41,7 +41,7 @@ let parse_error_rich =
 %token <char * Position> CHARLIT
 %token <string * Position> ID STRINGLIT
 //keywords
-%token <Position> BOOL CHAR ELSE FN FUN IF IN INT LET THEN TRUE FALSE
+%token <Position> BOOL CHAR ELSE FN FUN IF IN INT LET THEN TRUE FALSE INEG
 //specials
 %token <Position> IOTA LENGTH MAP READ REDUCE WRITE
 //symbols
@@ -50,6 +50,7 @@ let parse_error_rich =
 %token <Position> LCURLY RCURLY EOF AND OR NOT
 
 %nonassoc ELSE IN
+%left INEG
 %left OR
 %left AND
 %left NOT
@@ -109,6 +110,7 @@ Exp : NUM            { Constant (IntVal (fst $1), snd $1) }
     | Exp PLUS  Exp  { Plus ($1, $3, $2) }
     | Exp AND Exp    { And ($1, $3, $2) }
     | NOT Exp        { Not ($2, $1) }
+    | INEG Exp       { Negate ($2, $1)}
     | Exp OR Exp     { Or ($1, $3, $2) }
     | Exp MINUS Exp  { Minus($1, $3, $2) }
     | Exp TIMES Exp  { Times($1, $3, $2) }

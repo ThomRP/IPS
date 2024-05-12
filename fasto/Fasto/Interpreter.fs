@@ -207,7 +207,12 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         | (BoolVal n) -> BoolVal(not n)
         | (_) -> reportWrongType "operand of not" Bool res1 (expPos e)
 
-    | Negate(_, _) -> failwith "Unimplemented interpretation of negate"
+    | Negate(e, pos) -> 
+        let res1 = evalExp (e, vtab, ftab)
+        match (res1) with
+        | (IntVal n1) -> if (n1 <> 0) then IntVal 0 else IntVal 1
+        | (_) -> reportWrongType "operand of Negate" Bool res1 (expPos e)
+
     | Equal(e1, e2, pos) ->
         let r1 = evalExp (e1, vtab, ftab)
         let r2 = evalExp (e2, vtab, ftab)

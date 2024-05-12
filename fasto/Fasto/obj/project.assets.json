@@ -233,25 +233,25 @@
     ]
   },
   "packageFolders": {
-    "/home/gustav/.nuget/packages/": {}
+    "/Users/thomasrisom/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/mnt/c/Users/gusta/OneDrive/Desktop/git/IPS/fasto/Fasto/Fasto.fsproj",
+      "projectUniqueName": "/Users/thomasrisom/Documents/IPS/IPS/fasto/Fasto/Fasto.fsproj",
       "projectName": "Fasto",
-      "projectPath": "/mnt/c/Users/gusta/OneDrive/Desktop/git/IPS/fasto/Fasto/Fasto.fsproj",
-      "packagesPath": "/home/gustav/.nuget/packages/",
-      "outputPath": "/mnt/c/Users/gusta/OneDrive/Desktop/git/IPS/fasto/Fasto/obj/",
+      "projectPath": "/Users/thomasrisom/Documents/IPS/IPS/fasto/Fasto/Fasto.fsproj",
+      "packagesPath": "/Users/thomasrisom/.nuget/packages/",
+      "outputPath": "/Users/thomasrisom/Documents/IPS/IPS/fasto/Fasto/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/gustav/.nuget/NuGet/NuGet.Config"
+        "/Users/thomasrisom/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
-        "/snap/dotnet-sdk/241/sdk/8.0.204/FSharp/library-packs": {},
+        "/usr/local/share/dotnet/sdk/8.0.204/FSharp/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -298,7 +298,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/snap/dotnet-sdk/241/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.204/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
