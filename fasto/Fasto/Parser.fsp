@@ -47,11 +47,12 @@ let parse_error_rich =
 //symbols
 %token <Position> MINUS PLUS DEQ LTH TIMES DIVIDE
 %token <Position> COMMA SEMICOLON EQ ARROW LPAR RPAR LBRACKET RBRACKET
-%token <Position> LCURLY RCURLY EOF AND OR
+%token <Position> LCURLY RCURLY EOF AND OR NOT
 
 %nonassoc ELSE IN
 %left OR
 %left AND
+%left NOT
 %left DEQ LTH
 %left PLUS MINUS
 %left TIMES DIVIDE
@@ -107,6 +108,7 @@ Exp : NUM            { Constant (IntVal (fst $1), snd $1) }
                      { ArrayLit ($2, (), $1) }
     | Exp PLUS  Exp  { Plus ($1, $3, $2) }
     | Exp AND Exp    { And ($1, $3, $2) }
+    | NOT Exp        { Not ($2, $1) }
     | Exp OR Exp     { Or ($1, $3, $2) }
     | Exp MINUS Exp  { Minus($1, $3, $2) }
     | Exp TIMES Exp  { Times($1, $3, $2) }

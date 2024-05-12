@@ -1,2 +1,2 @@
 fun bool main() =
-  let n = 3 in (3 == 3) || (5/0 == 0)
+  let n = 3 in not false

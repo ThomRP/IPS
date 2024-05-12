@@ -64,6 +64,7 @@ let keyword (s, pos) =
        | "fn"           -> Parser.FN pos
        | "false"        -> Parser.FALSE pos
        | "true"         -> Parser.TRUE pos
+       | "not"          -> Parser.NOT pos
 
 (* specials: *)
        | "iota"         -> Parser.IOTA pos
