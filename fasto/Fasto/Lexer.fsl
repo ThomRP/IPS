@@ -62,6 +62,8 @@ let keyword (s, pos) =
        | "char"         -> Parser.CHAR pos
        | "fun"          -> Parser.FUN pos
        | "fn"           -> Parser.FN pos
+       | "false"        -> Parser.FALSE pos
+       | "true"         -> Parser.TRUE pos
 
 (* specials: *)
        | "iota"         -> Parser.IOTA pos
@@ -113,5 +115,7 @@ rule Token = parse
   | '{'                   { Parser.LCURLY (getPos lexbuf) }
   | '}'                   { Parser.RCURLY (getPos lexbuf) }
   | ','                   { Parser.COMMA  (getPos lexbuf) }
+  | "*"                   { Parser.TIMES  (getPos lexbuf) }
+  | "/"                   { Parser.DIVIDE  (getPos lexbuf) }
   | eof                   { Parser.EOF    (getPos lexbuf) }
   | _                     { lexerError lexbuf "Illegal symbol in input" }
