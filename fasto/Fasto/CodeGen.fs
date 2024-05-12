@@ -332,9 +332,19 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         in `e1 || e2` if the execution of `e1` will evaluate to `true` then
         the code of `e2` must not be executed. Similarly for `And` (&&).
   *)
-    | And(_, _, _) -> failwith "Unimplemented code generation of &&"
+    | And(e1, e2, pos) -> 
+        let t1 = newReg "lt_L"
+        let t2 = newReg "lt_R"
+        let code1 = compileExp e1 vtable t1
+        let code2 = compileExp e2 vtable t2
+        code1 @ code2 @ [ AND(place, t1, t2) ]
 
-    | Or(_, _, _) -> failwith "Unimplemented code generation of ||"
+    | Or(e1, e2, pos) -> 
+        let t1 = newReg "lt_L"
+        let t2 = newReg "lt_R"
+        let code1 = compileExp e1 vtable t1
+        let code2 = compileExp e2 vtable t2
+        code1 @ code2 @ [ OR(place, t1, t2) ]
 
     (* Indexing:
      1. generate code to compute the index

@@ -181,8 +181,26 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         | (IntVal _, _) -> reportWrongType "right operand of /" Int res2 (expPos e2)
         | (_, _) -> reportWrongType "left operand of /" Int res1 (expPos e1)
 
-    | And(_, _, _) -> failwith "Unimplemented interpretation of &&"
-    | Or(_, _, _) -> failwith "Unimplemented interpretation of ||"
+    | And(e1, e2, pos) -> 
+        let res1 = evalExp (e1, vtab, ftab)
+        if (res1 = BoolVal(true)) then
+            let res2 = evalExp (e2, vtab, ftab)
+            match (res1, res2) with
+            | (BoolVal n1, BoolVal n2) -> BoolVal(n1 && n2)
+            | (BoolVal _, _) -> reportWrongType "right operand of &&" Bool res2 (expPos e2)
+            | (_, _) -> reportWrongType "left operand of &&" Bool res1 (expPos e1)
+        else BoolVal(false)
+
+
+    | Or(e1, e2, pos) -> 
+        let res1 = evalExp (e1, vtab, ftab)
+        if (res1 = BoolVal(false)) then
+            let res2 = evalExp (e2, vtab, ftab)
+            match (res1, res2) with
+            | (BoolVal n1, BoolVal n2) -> BoolVal(n1 || n2)
+            | (BoolVal _, _) -> reportWrongType "right operand of ||" Bool res2 (expPos e2)
+            | (_, _) -> reportWrongType "left operand of ||" Bool res1 (expPos e1)
+        else BoolVal(true)
     | Not(_, _) -> failwith "Unimplemented interpretation of not"
     | Negate(_, _) -> failwith "Unimplemented interpretation of negate"
     | Equal(e1, e2, pos) ->

@@ -4,6 +4,8 @@ type token =
   | LCURLY of (Position)
   | RCURLY of (Position)
   | EOF of (Position)
+  | AND of (Position)
+  | OR of (Position)
   | COMMA of (Position)
   | SEMICOLON of (Position)
   | EQ of (Position)
@@ -44,6 +46,8 @@ type tokenId =
     | TOKEN_LCURLY
     | TOKEN_RCURLY
     | TOKEN_EOF
+    | TOKEN_AND
+    | TOKEN_OR
     | TOKEN_COMMA
     | TOKEN_SEMICOLON
     | TOKEN_EQ
