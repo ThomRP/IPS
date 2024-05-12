@@ -6,6 +6,7 @@ type token =
   | EOF of (Position)
   | AND of (Position)
   | OR of (Position)
+  | NOT of (Position)
   | COMMA of (Position)
   | SEMICOLON of (Position)
   | EQ of (Position)
@@ -48,6 +49,7 @@ type tokenId =
     | TOKEN_EOF
     | TOKEN_AND
     | TOKEN_OR
+    | TOKEN_NOT
     | TOKEN_COMMA
     | TOKEN_SEMICOLON
     | TOKEN_EQ
