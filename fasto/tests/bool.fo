@@ -1,2 +1,10 @@
 fun int main() =
-  let n = 3; x = 0; y = 4 in x+y+n
+  let a = replicate(7, "a") in
+  let tmp = write(a[0]) in
+  let tmp = write(a[1]) in
+  let tmp = write(a[2]) in
+  let tmp = write(a[3]) in
+  let tmp = write(a[4]) in
+  let tmp = write(a[5]) in
+  let tmp = write(a[6]) in
+  0
