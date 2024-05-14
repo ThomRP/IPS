@@ -27,6 +27,7 @@ type token =
   | READ of (Position)
   | REDUCE of (Position)
   | WRITE of (Position)
+  | REPLICATE of (Position)
   | BOOL of (Position)
   | CHAR of (Position)
   | ELSE of (Position)
@@ -71,6 +72,7 @@ type tokenId =
     | TOKEN_READ
     | TOKEN_REDUCE
     | TOKEN_WRITE
+    | TOKEN_REPLICATE
     | TOKEN_BOOL
     | TOKEN_CHAR
     | TOKEN_ELSE

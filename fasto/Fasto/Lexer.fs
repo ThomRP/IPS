@@ -58,9 +58,10 @@ let keyword (s, pos) =
        | "reduce"       -> Parser.REDUCE pos
        | "read"         -> Parser.READ pos
        | "write"        -> Parser.WRITE pos
+       | "replicate"    -> Parser.REPLICATE pos
        | _              -> Parser.ID (s, pos)
 
-# 63 "Lexer.fs"
+# 64 "Lexer.fs"
 let trans : uint16[] array = 
     [| 
    (* State 0 *)
@@ -155,159 +156,159 @@ let rec _fslex_dummy () = _fslex_dummy()
 and Token  lexbuf =
   match _fslex_tables.Interpret(0,lexbuf) with
   | 0 -> ( 
-# 80 "Lexer.fsl"
+# 81 "Lexer.fsl"
                                            Token lexbuf 
-# 160 "Lexer.fs"
+# 161 "Lexer.fs"
           )
   | 1 -> ( 
-# 81 "Lexer.fsl"
+# 82 "Lexer.fsl"
                                            currentLine  <- currentLine + 1;
                                            lineStartPos <-  lexbuf.StartPos.pos_cnum
                                                             :: lineStartPos;
                                            Token lexbuf 
-# 168 "Lexer.fs"
+# 169 "Lexer.fs"
           )
   | 2 -> ( 
-# 85 "Lexer.fsl"
+# 86 "Lexer.fsl"
                                            Token lexbuf 
-# 173 "Lexer.fs"
+# 174 "Lexer.fs"
           )
   | 3 -> ( 
-# 87 "Lexer.fsl"
+# 88 "Lexer.fsl"
                                                Parser.NUM
                                                  ( int (Encoding.UTF8.GetString(lexbuf.Lexeme))
                                                  , getPos lexbuf )
                                              
-# 181 "Lexer.fs"
+# 182 "Lexer.fs"
           )
   | 4 -> ( 
-# 92 "Lexer.fsl"
+# 93 "Lexer.fsl"
                                            keyword ( Encoding.UTF8.GetString(lexbuf.Lexeme)
                                                    , getPos lexbuf ) 
-# 187 "Lexer.fs"
+# 188 "Lexer.fs"
           )
   | 5 -> ( 
-# 95 "Lexer.fsl"
+# 96 "Lexer.fsl"
                                            let str0 = Encoding.UTF8.GetString(lexbuf.Lexeme)
                                            let str1 = str0.Substring (1, (String.length str0) - 2)
                                            let str2 = AbSyn.fromCString str1
                                            Parser.CHARLIT (str2.Chars(0), getPos lexbuf)
                                          
-# 196 "Lexer.fs"
+# 197 "Lexer.fs"
           )
   | 6 -> ( 
-# 101 "Lexer.fsl"
+# 102 "Lexer.fsl"
                                           
                                            let str0 = Encoding.UTF8.GetString(lexbuf.Lexeme)
                                            let str1 = str0.Substring (1, (String.length str0) - 2)
                                            Parser.STRINGLIT (AbSyn.fromCString str1, getPos lexbuf)
                                          
-# 205 "Lexer.fs"
+# 206 "Lexer.fs"
           )
   | 7 -> ( 
-# 106 "Lexer.fsl"
+# 107 "Lexer.fsl"
                                            Parser.PLUS   (getPos lexbuf) 
-# 210 "Lexer.fs"
+# 211 "Lexer.fs"
           )
   | 8 -> ( 
-# 107 "Lexer.fsl"
+# 108 "Lexer.fsl"
                                            Parser.MINUS  (getPos lexbuf) 
-# 215 "Lexer.fs"
+# 216 "Lexer.fs"
           )
   | 9 -> ( 
-# 108 "Lexer.fsl"
+# 109 "Lexer.fsl"
                                            Parser.ARROW  (getPos lexbuf) 
-# 220 "Lexer.fs"
+# 221 "Lexer.fs"
           )
   | 10 -> ( 
-# 109 "Lexer.fsl"
+# 110 "Lexer.fsl"
                                            Parser.DEQ    (getPos lexbuf) 
-# 225 "Lexer.fs"
+# 226 "Lexer.fs"
           )
   | 11 -> ( 
-# 110 "Lexer.fsl"
+# 111 "Lexer.fsl"
                                            Parser.EQ     (getPos lexbuf) 
-# 230 "Lexer.fs"
+# 231 "Lexer.fs"
           )
   | 12 -> ( 
-# 111 "Lexer.fsl"
+# 112 "Lexer.fsl"
                                            Parser.LTH    (getPos lexbuf) 
-# 235 "Lexer.fs"
+# 236 "Lexer.fs"
           )
   | 13 -> ( 
-# 112 "Lexer.fsl"
+# 113 "Lexer.fsl"
                                            Parser.LPAR   (getPos lexbuf) 
-# 240 "Lexer.fs"
+# 241 "Lexer.fs"
           )
   | 14 -> ( 
-# 113 "Lexer.fsl"
+# 114 "Lexer.fsl"
                                            Parser.RPAR   (getPos lexbuf) 
-# 245 "Lexer.fs"
+# 246 "Lexer.fs"
           )
   | 15 -> ( 
-# 114 "Lexer.fsl"
+# 115 "Lexer.fsl"
                                            Parser.LBRACKET (getPos lexbuf) 
-# 250 "Lexer.fs"
+# 251 "Lexer.fs"
           )
   | 16 -> ( 
-# 115 "Lexer.fsl"
+# 116 "Lexer.fsl"
                                            Parser.RBRACKET (getPos lexbuf) 
-# 255 "Lexer.fs"
+# 256 "Lexer.fs"
           )
   | 17 -> ( 
-# 116 "Lexer.fsl"
+# 117 "Lexer.fsl"
                                            Parser.LCURLY (getPos lexbuf) 
-# 260 "Lexer.fs"
+# 261 "Lexer.fs"
           )
   | 18 -> ( 
-# 117 "Lexer.fsl"
+# 118 "Lexer.fsl"
                                            Parser.RCURLY (getPos lexbuf) 
-# 265 "Lexer.fs"
+# 266 "Lexer.fs"
           )
   | 19 -> ( 
-# 118 "Lexer.fsl"
+# 119 "Lexer.fsl"
                                            Parser.COMMA  (getPos lexbuf) 
-# 270 "Lexer.fs"
+# 271 "Lexer.fs"
           )
   | 20 -> ( 
-# 119 "Lexer.fsl"
+# 120 "Lexer.fsl"
                                            Parser.TIMES  (getPos lexbuf) 
-# 275 "Lexer.fs"
+# 276 "Lexer.fs"
           )
   | 21 -> ( 
-# 120 "Lexer.fsl"
+# 121 "Lexer.fsl"
                                            Parser.DIVIDE  (getPos lexbuf) 
-# 280 "Lexer.fs"
+# 281 "Lexer.fs"
           )
   | 22 -> ( 
-# 121 "Lexer.fsl"
+# 122 "Lexer.fsl"
                                            Parser.AND    (getPos lexbuf) 
-# 285 "Lexer.fs"
+# 286 "Lexer.fs"
           )
   | 23 -> ( 
-# 122 "Lexer.fsl"
+# 123 "Lexer.fsl"
                                            Parser.OR    (getPos lexbuf) 
-# 290 "Lexer.fs"
+# 291 "Lexer.fs"
           )
   | 24 -> ( 
-# 123 "Lexer.fsl"
+# 124 "Lexer.fsl"
                                            Parser.NEGATE   (getPos lexbuf) 
-# 295 "Lexer.fs"
+# 296 "Lexer.fs"
           )
   | 25 -> ( 
-# 124 "Lexer.fsl"
+# 125 "Lexer.fsl"
                                            Parser.SEMICOLON (getPos lexbuf) 
-# 300 "Lexer.fs"
+# 301 "Lexer.fs"
           )
   | 26 -> ( 
-# 125 "Lexer.fsl"
+# 126 "Lexer.fsl"
                                            Parser.EOF    (getPos lexbuf) 
-# 305 "Lexer.fs"
+# 306 "Lexer.fs"
           )
   | 27 -> ( 
-# 126 "Lexer.fsl"
+# 127 "Lexer.fsl"
                                            lexerError lexbuf "Illegal symbol in input" 
-# 310 "Lexer.fs"
+# 311 "Lexer.fs"
           )
   | _ -> failwith "Token"
 

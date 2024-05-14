@@ -153,16 +153,6 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         | (IntVal n1, IntVal n2) -> IntVal(n1 - n2)
         | (IntVal _, _) -> reportWrongType "right operand of -" Int res2 (expPos e2)
         | (_, _) -> reportWrongType "left operand of -" Int res1 (expPos e1)
-    (* TODO: project task 1:
-     Look in `AbSyn.fs` for the arguments of the `Times`
-     (`Divide`,...) expression constructors.
-        Implementation similar to the cases of Plus/Minus.
-        Try to pattern match the code above.
-        For `Divide`, remember to check for attempts to divide by zero.
-        For `And`/`Or`: make sure to implement the short-circuit semantics,
-        e.g., `And (e1, e2, pos)` should not evaluate `e2` if `e1` already
-              evaluates to false.
-  *)
     | Times(e1, e2, pos) ->
         let res1 = evalExp (e1, vtab, ftab)
         let res2 = evalExp (e2, vtab, ftab)
@@ -201,6 +191,7 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
             | (BoolVal _, _) -> reportWrongType "right operand of ||" Bool res2 (expPos e2)
             | (_, _) -> reportWrongType "left operand of ||" Bool res1 (expPos e1)
         else BoolVal(true)
+
     | Not(e, pos) -> 
         let res1 = evalExp (e, vtab, ftab)
         match (res1) with
@@ -310,7 +301,24 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
          the value of `a`; otherwise raise an error (containing
          a meaningful message).
   *)
-    | Replicate(_, _, _, _) -> failwith "Unimplemented interpretation of replicate"
+    | Replicate(n, a, _, pos) ->
+        let sz = evalExp (n, vtab, ftab)
+        let arr = evalExp (a, vtab, ftab)
+        
+
+        match sz with
+        | IntVal size ->
+            if size >= 0 then
+                let els = List.replicate size arr
+                let elt =
+                    match els with
+                    | [] -> Int (* Arbitrary *)
+                    | v :: _ -> valueType v
+                ArrayVal(els,elt)
+            else
+                let msg = sprintf "Argument of \"replicate\" is negative: %i" size
+                raise (MyError(msg, pos))
+        | _ -> reportWrongType "argument of \"replicate\"" Int sz pos
 
     (* TODO project task 2: `filter(p, arr)`
        pattern match the implementation of map:
