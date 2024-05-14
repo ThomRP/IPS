@@ -65,8 +65,6 @@ let keyword (s, pos) =
        | "false"        -> Parser.FALSE pos
        | "true"         -> Parser.TRUE pos
        | "not"          -> Parser.NOT pos
-       | "ineg"         -> Parser.INEG pos
-
 
 (* specials: *)
        | "iota"         -> Parser.IOTA pos
@@ -122,5 +120,7 @@ rule Token = parse
   | "/"                   { Parser.DIVIDE  (getPos lexbuf) }
   | "&&"                  { Parser.AND    (getPos lexbuf) }
   | "||"                  { Parser.OR    (getPos lexbuf) }
+  | "~"                   { Parser.NEGATE   (getPos lexbuf) }
+  | ";"                   { Parser.SEMICOLON (getPos lexbuf) }
   | eof                   { Parser.EOF    (getPos lexbuf) }
   | _                     { lexerError lexbuf "Illegal symbol in input" }

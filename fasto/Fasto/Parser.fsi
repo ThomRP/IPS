@@ -39,7 +39,7 @@ type token =
   | THEN of (Position)
   | TRUE of (Position)
   | FALSE of (Position)
-  | INEG of (Position)
+  | NEGATE of (Position)
   | ID of (string * Position)
   | STRINGLIT of (string * Position)
   | CHARLIT of (char * Position)
@@ -83,7 +83,7 @@ type tokenId =
     | TOKEN_THEN
     | TOKEN_TRUE
     | TOKEN_FALSE
-    | TOKEN_INEG
+    | TOKEN_NEGATE
     | TOKEN_ID
     | TOKEN_STRINGLIT
     | TOKEN_CHARLIT
@@ -99,6 +99,8 @@ type nonTerminalId =
     | NONTERM_Params
     | NONTERM_Exp
     | NONTERM_Exps
+    | NONTERM_Decs
+    | NONTERM_Dec
     | NONTERM_FunArg
 /// This function maps tokens to integer indexes
 val tagOfToken: token -> int
