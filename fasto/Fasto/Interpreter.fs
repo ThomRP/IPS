@@ -171,35 +171,43 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         | (IntVal _, _) -> reportWrongType "right operand of /" Int res2 (expPos e2)
         | (_, _) -> reportWrongType "left operand of /" Int res1 (expPos e1)
 
-    | And(e1, e2, pos) -> 
+    | And(e1, e2, pos) ->
         let res1 = evalExp (e1, vtab, ftab)
+
         if (res1 = BoolVal(true)) then
             let res2 = evalExp (e2, vtab, ftab)
+
             match (res1, res2) with
             | (BoolVal n1, BoolVal n2) -> BoolVal(n1 && n2)
             | (BoolVal _, _) -> reportWrongType "right operand of &&" Bool res2 (expPos e2)
             | (_, _) -> reportWrongType "left operand of &&" Bool res1 (expPos e1)
-        else BoolVal(false)
+        else
+            BoolVal(false)
 
 
-    | Or(e1, e2, pos) -> 
+    | Or(e1, e2, pos) ->
         let res1 = evalExp (e1, vtab, ftab)
+
         if (res1 = BoolVal(false)) then
             let res2 = evalExp (e2, vtab, ftab)
+
             match (res1, res2) with
             | (BoolVal n1, BoolVal n2) -> BoolVal(n1 || n2)
             | (BoolVal _, _) -> reportWrongType "right operand of ||" Bool res2 (expPos e2)
             | (_, _) -> reportWrongType "left operand of ||" Bool res1 (expPos e1)
-        else BoolVal(true)
+        else
+            BoolVal(true)
 
-    | Not(e, pos) -> 
+    | Not(e, pos) ->
         let res1 = evalExp (e, vtab, ftab)
+
         match (res1) with
         | (BoolVal n) -> BoolVal(not n)
         | (_) -> reportWrongType "operand of not" Bool res1 (expPos e)
 
-    | Negate(e, pos) -> 
+    | Negate(e, pos) ->
         let res1 = evalExp (e, vtab, ftab)
+
         match (res1) with
         | (IntVal n1) -> if (n1 <> 0) then IntVal 0 else IntVal 1
         | (_) -> reportWrongType "operand of Negate" Bool res1 (expPos e)
@@ -304,17 +312,19 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
     | Replicate(n, a, _, pos) ->
         let sz = evalExp (n, vtab, ftab)
         let arr = evalExp (a, vtab, ftab)
-        
+
 
         match sz with
         | IntVal size ->
             if size >= 0 then
                 let els = List.replicate size arr
+
                 let elt =
                     match els with
                     | [] -> Int (* Arbitrary *)
                     | v :: _ -> valueType v
-                ArrayVal(els,elt)
+
+                ArrayVal(els, elt)
             else
                 let msg = sprintf "Argument of \"replicate\" is negative: %i" size
                 raise (MyError(msg, pos))
@@ -328,13 +338,43 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
          that the return value is a boolean at all);
        - create an `ArrayVal` from the (list) result of the previous step.
   *)
-    | Filter(_, _, _, _) -> failwith "Unimplemented interpretation of filter"
+    | Filter(farg, arrexp, _, pos) ->
+        let arr = evalExp (arrexp, vtab, ftab)
+        let farg_ret_type = rtpFunArg farg ftab pos
+
+        if (farg_ret_type <> Bool) then
+            failwith "1st argument of \"filter\" exptedet to be bool"
+
+        let extractBool value =
+            match value with
+            | BoolVal b -> b
+            | _ -> failwith "Expected a BoolValue"
+
+        match (arr) with
+        | (ArrayVal(lst, tp1)) ->
+            let mlst =
+                List.filter (fun x -> extractBool (evalFunArg (farg, vtab, ftab, pos, [ x ]))) lst
+
+            ArrayVal(mlst, tp1)
+        | otherwise -> reportNonArray "2nd argument of \"filter\"" arr pos
 
     (* TODO project task 2: `scan(f, ne, arr)`
      Implementation similar to reduce, except that it produces an array
      of the same type and length to the input array `arr`.
   *)
-    | Scan(_, _, _, _, _) -> failwith "Unimplemented interpretation of scan"
+    | Scan(farg, ne, arrexp, tp, pos) ->
+        let farg_ret_type = rtpFunArg farg ftab pos
+        let arr = evalExp (arrexp, vtab, ftab)
+        let nel = evalExp (ne, vtab, ftab)
+
+        match arr with
+        | ArrayVal(lst, tp1) ->
+            let mlst =
+                List.scan (fun acc x -> evalFunArg (farg, vtab, ftab, pos, [ acc; x ])) nel lst
+
+            ArrayVal(mlst, tp1)
+        | otherwise -> reportNonArray "3rd argument of \"reduce\"" arr pos
+
 
     | Read(t, p) ->
         let str = Console.ReadLine()
