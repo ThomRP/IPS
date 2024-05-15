@@ -240,10 +240,16 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         let code2 = compileExp e2 vtable t2
         code1 @ code2 @ [ DIV(place, t1, t2) ]
 
-    | Not(_, _) -> failwith "Unimplemented code generation of not"
+    | Not(e1, pos) -> 
+        let t1 = newReg "NOT_exp"
+        let code1 = compileExp e1 vtable t1
+        code1 @ [XORI (place,t1,1)]
 
-    | Negate(_, _) -> failwith "Unimplemented code generation of negate"
-
+    | Negate(_, _) ->
+        let t1 = newReg "NOT_exp"
+        let code1 = compileExp e1 vtable t1
+        code1 @ [SUB (place,Rzero,t1)]
+        
     | Let(dec, e1, pos) ->
         let (code1, vtable1) = compileDec dec vtable
         let code2 = compileExp e1 vtable1 place

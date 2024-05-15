@@ -209,7 +209,7 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         let res1 = evalExp (e, vtab, ftab)
 
         match (res1) with
-        | (IntVal n1) -> if (n1 <> 0) then IntVal 0 else IntVal 1
+        | (IntVal n1) -> (0-n1)
         | (_) -> reportWrongType "operand of Negate" Bool res1 (expPos e)
 
     | Equal(e1, e2, pos) ->

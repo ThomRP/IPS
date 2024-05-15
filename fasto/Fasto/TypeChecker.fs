@@ -171,9 +171,12 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
         let (e1_dec, e2_dec) = checkBinOp ftab vtab (pos, Bool, e1, e2)
         (Bool, Or(e1_dec, e2_dec, pos))
 
-    | Not(_, _) -> failwith "Unimplemented type check of not"
-
-    | Negate(_, _) -> failwith "Unimplemented type check of negate"
+    | Not(e1, pos) -> 
+        let (t1,t_exp) = checkExp ftab vtab e1    
+        (Bool, Not(t_exp,pos))
+    | Negate(_, _) -> 
+        let (t1,t_exp) = checkExp ftab vtab e1    
+        (Int, Negate(t_exp,pos))
 
     (* The types for e1, e2 must be the same. The result is always a Bool. *)
     | Equal(e1, e2, pos) ->
