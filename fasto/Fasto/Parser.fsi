@@ -28,6 +28,8 @@ type token =
   | REDUCE of (Position)
   | WRITE of (Position)
   | REPLICATE of (Position)
+  | SCAN of (Position)
+  | FILTER of (Position)
   | BOOL of (Position)
   | CHAR of (Position)
   | ELSE of (Position)
@@ -73,6 +75,8 @@ type tokenId =
     | TOKEN_REDUCE
     | TOKEN_WRITE
     | TOKEN_REPLICATE
+    | TOKEN_SCAN
+    | TOKEN_FILTER
     | TOKEN_BOOL
     | TOKEN_CHAR
     | TOKEN_ELSE
