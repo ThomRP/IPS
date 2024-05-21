@@ -814,4 +814,4 @@ let compile (funs: TypedProg) : Instruction list =
         (* Note: no overflow checks... *)
         @ [ ALIGN 2; COMMENT "Space for Fasto heap"; LABEL "d.heap"; SPACE 100000 ]
 
-    main_prog
+  
