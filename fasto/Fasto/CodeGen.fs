@@ -154,9 +154,7 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
     match e with
     | Constant(IntVal n, pos) -> [ LI(place, n) ] (* assembler will generate appropriate
                            instruction sequence for any value n *)
-    | Constant(BoolVal p, _) ->
-        (* TODO project task 1: represent `true`/`false` values as `1`/`0` *)
-        failwith "Unimplemented code generation for boolean constants"
+    | Constant(BoolVal p, _) -> if p then [ LI(place, 1) ] else [ LI(place, 0) ]
     | Constant(CharVal c, pos) -> [ LI(place, int c) ]
 
     (* Create/return a label here, collect all string literals of the program
@@ -218,14 +216,6 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         let code1 = compileExp e1 vtable t1
         let code2 = compileExp e2 vtable t2
         code1 @ code2 @ [ SUB(place, t1, t2) ]
-
-    (* TODO project task 1:
-     Look in `AbSyn.fs` for the expression constructors `Times`, ...
-     `Times` is very similar to `Plus`/`Minus`.
-     For `Divide`, you may ignore division by zero for a quick first
-     version, but remember to come back and clean it up later.
-     `Not` and `Negate` are simpler; you can use `XORI` for `Not`
-  *)
     | Times(e1, e2, pos) ->
         let t1 = newReg "times_L"
         let t2 = newReg "times_R"
@@ -240,9 +230,15 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         let code2 = compileExp e2 vtable t2
         code1 @ code2 @ [ DIV(place, t1, t2) ]
 
-    | Not(_, _) -> failwith "Unimplemented code generation of not"
+    | Not(e1, pos) ->
+        let t1 = newReg "NOT_exp"
+        let code1 = compileExp e1 vtable t1
+        code1 @ [ XORI(place, t1, 1) ]
 
-    | Negate(_, _) -> failwith "Unimplemented code generation of negate"
+    | Negate(e1, pos) ->
+        let t1 = newReg "NOT_exp"
+        let code1 = compileExp e1 vtable t1
+        code1 @ [ SUB(place, Rzero, t1) ]
 
     | Let(dec, e1, pos) ->
         let (code1, vtable1) = compileDec dec vtable
@@ -324,14 +320,6 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         let code1 = compileExp e1 vtable t1
         let code2 = compileExp e2 vtable t2
         code1 @ code2 @ [ SLT(place, t1, t2) ]
-
-    (* TODO project task 1:
-        Look in `AbSyn.fs` for the expression constructors of `And` and `Or`.
-        The implementation of `And` and `Or` is more complicated than `Plus`
-        because you need to ensure the short-circuit semantics, e.g.,
-        in `e1 || e2` if the execution of `e1` will evaluate to `true` then
-        the code of `e2` must not be executed. Similarly for `And` (&&).
-  *)
     | And(e1, e2, pos) ->
         let t1 = newReg "lt_L"
         let t2 = newReg "lt_R"
@@ -537,7 +525,71 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         If `n` is less than `0` then remember to terminate the program with
         an error -- see implementation of `iota`.
   *)
-    | Replicate(_, _, _, _) -> failwith "Unimplemented code generation of replicate"
+    | Replicate(n_exp, a_exp, a_type, (line, _)) ->
+        let size_reg = newReg "size"
+        let n_code = compileExp n_exp vtable size_reg
+        let a_reg = newReg "a"
+        let a_code = compileExp a_exp vtable a_reg
+        (* size_reg is now the integer n. *)
+
+        (* Check that array size N >= 0:
+         if N >= 0 then jumpto safe_lab
+         jumpto "_IllegalArrSizeError_"
+         safe_lab: ...
+      *)
+        let safe_lab = newLab "safe"
+
+        let checksize =
+            [ BGE(size_reg, Rzero, safe_lab)
+              LI(Ra0, line)
+              LA(Ra1, "m.BadSize")
+              J "p.RuntimeError"
+              LABEL(safe_lab) ]
+
+        let addr_reg = newReg "addr"
+        let i_reg = newReg "i"
+        let init_regs = [ ADDI(addr_reg, place, 4); MV(i_reg, Rzero) ]
+        (* addr_reg is now the position of the first array element. *)
+
+        (* Run a loop.  Keep jumping back to loop_beg until it is not the
+         case that i_reg < size_reg, and then jump to loop_end. *)
+        let loop_beg = newLab "loop_beg"
+        let loop_end = newLab "loop_end"
+        let loop_header = [ LABEL(loop_beg); BGE(i_reg, size_reg, loop_end) ]
+        (* iota is just 'arr[i] = i'.  arr[i] is addr_reg. *)
+        let mutable loop_iota = []
+        let mutable loop_footer = []
+
+        if a_type = Int then
+            loop_iota <- [ SW(a_reg, addr_reg, 0) ]
+
+            loop_footer <-
+                [ ADDI(addr_reg, addr_reg, 4)
+                  ADDI(i_reg, i_reg, 1)
+                  J loop_beg
+                  LABEL loop_end ]
+        else
+            loop_iota <- [ SB(a_reg, addr_reg, 0) ]
+
+            loop_footer <-
+                [ ADDI(addr_reg, addr_reg, 1)
+                  ADDI(i_reg, i_reg, 1)
+                  J loop_beg
+                  LABEL loop_end ]
+
+
+
+
+
+        n_code
+        @ a_code
+        @ checksize
+        @ dynalloc (size_reg, place, a_type)
+        @ init_regs
+        @ loop_header
+        @ loop_iota
+        @ loop_footer
+
 
     (* TODO project task 2: see also the comment to replicate.
      (a) `filter(f, arr)`:  has some similarity with the implementation of map.
