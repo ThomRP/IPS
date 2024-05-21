@@ -1,7 +1,9 @@
-fun int plus (int x, int y) = x + y
+fun bool write_int(bool x) = write(x)
+
+fun [bool] write_int_arr([bool] x) = map(write_int, x)
 
 
-fun [int] main() =
-  let x = scan(plus,0,{1,2,3,4}) in
-  x
+fun [bool] main() =
+  let x = replicate(7,true) in
+  write_int_arr(x)
   

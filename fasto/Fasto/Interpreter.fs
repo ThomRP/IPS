@@ -209,7 +209,7 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         let res1 = evalExp (e, vtab, ftab)
 
         match (res1) with
-        | (IntVal n1) -> (0-n1)
+        | (IntVal n1) -> if (n1 <> 0) then IntVal 0 else IntVal 1
         | (_) -> reportWrongType "operand of Negate" Bool res1 (expPos e)
 
     | Equal(e1, e2, pos) ->
@@ -300,15 +300,7 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         match arr with
         | ArrayVal(lst, tp1) -> List.fold (fun acc x -> evalFunArg (farg, vtab, ftab, pos, [ acc; x ])) nel lst
         | otherwise -> reportNonArray "3rd argument of \"reduce\"" arr pos
-    (* TODO project task 2: `replicate(n, a)`
-     Look in `AbSyn.fs` for the arguments of the `Replicate`
-     (`Map`,`Scan`) expression constructors.
-       - evaluate `n` then evaluate `a`,
-       - check that `n` evaluates to an integer value >= 0
-       - If so then create an array containing `n` replicas of
-         the value of `a`; otherwise raise an error (containing
-         a meaningful message).
-  *)
+
     | Replicate(n, a, _, pos) ->
         let sz = evalExp (n, vtab, ftab)
         let arr = evalExp (a, vtab, ftab)
@@ -329,15 +321,6 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
                 let msg = sprintf "Argument of \"replicate\" is negative: %i" size
                 raise (MyError(msg, pos))
         | _ -> reportWrongType "argument of \"replicate\"" Int sz pos
-
-    (* TODO project task 2: `filter(p, arr)`
-       pattern match the implementation of map:
-       - evaluate `arr` and check that the (value) result corresponds to an array;
-       - use F# `List.filter` to keep only the elements `a` of `arr` which succeed
-         under predicate `p`, i.e., `p(a) = true` (but remember to check
-         that the return value is a boolean at all);
-       - create an `ArrayVal` from the (list) result of the previous step.
-  *)
     | Filter(farg, arrexp, _, pos) ->
         let arr = evalExp (arrexp, vtab, ftab)
         let farg_ret_type = rtpFunArg farg ftab pos
@@ -358,10 +341,6 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
             ArrayVal(mlst, tp1)
         | otherwise -> reportNonArray "2nd argument of \"filter\"" arr pos
 
-    (* TODO project task 2: `scan(f, ne, arr)`
-     Implementation similar to reduce, except that it produces an array
-     of the same type and length to the input array `arr`.
-  *)
     | Scan(farg, ne, arrexp, tp, pos) ->
         let farg_ret_type = rtpFunArg farg ftab pos
         let arr = evalExp (arrexp, vtab, ftab)

@@ -1,3 +1,4 @@
+
 (* A type-checker for Fasto. *)
 
 module TypeChecker
@@ -150,11 +151,6 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
     | Minus(e1, e2, pos) ->
         let (e1_dec, e2_dec) = checkBinOp ftab vtab (pos, Int, e1, e2)
         (Int, Minus(e1_dec, e2_dec, pos))
-
-    (* TODO project task 1:
-        Implement by pattern matching Plus/Minus above.
-        See `AbSyn.fs` for the expression constructors of `Times`, ...
-    *)
     | Times(e1, e2, pos) ->
         let (e1_dec, e2_dec) = checkBinOp ftab vtab (pos, Int, e1, e2)
         (Int, Times(e1_dec, e2_dec, pos))
@@ -163,20 +159,20 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
         let (e1_dec, e2_dec) = checkBinOp ftab vtab (pos, Int, e1, e2)
         (Int, Divide(e1_dec, e2_dec, pos))
 
-    | And(e1, e2, pos) -> 
+    | And(e1, e2, pos) ->
         let (e1_dec, e2_dec) = checkBinOp ftab vtab (pos, Bool, e1, e2)
         (Bool, And(e1_dec, e2_dec, pos))
 
-    | Or(e1, e2, pos) -> 
+    | Or(e1, e2, pos) ->
         let (e1_dec, e2_dec) = checkBinOp ftab vtab (pos, Bool, e1, e2)
         (Bool, Or(e1_dec, e2_dec, pos))
 
-    | Not(e1, pos) -> 
-        let (t1,t_exp) = checkExp ftab vtab e1    
-        (Bool, Not(t_exp,pos))
-    | Negate(_, _) -> 
-        let (t1,t_exp) = checkExp ftab vtab e1    
-        (Int, Negate(t_exp,pos))
+    | Not(e1, pos) ->
+        let (t1, t_exp) = checkExp ftab vtab e1
+        (Bool, Not(t_exp, pos))
+    | Negate(e1, pos) ->
+        let (t1, t_exp) = checkExp ftab vtab e1
+        (Int, Negate(t_exp, pos))
 
     (* The types for e1, e2 must be the same. The result is always a Bool. *)
     | Equal(e1, e2, pos) ->
@@ -353,7 +349,15 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
         - assuming `a` is of type `t` the result type
           of replicate is `[t]`
     *)
-    | Replicate(_, _, _, _) -> failwith "Unimplemented type check of replicate"
+    | Replicate(n_exp, a_exp, _, pos) ->
+        let (n_type, n_exp_dec) = checkExp ftab vtab n_exp
+        let (a_type, a_exp_dec) = checkExp ftab vtab a_exp
+
+        if n_type <> Int then
+            reportTypeWrong "argument of iota" Int n_type pos
+
+
+        (Array a_type, Replicate(n_exp_dec, a_exp_dec, a_type, pos))
 
     (* TODO project task 2: Hint for `filter(f, arr)`
         Look into the type-checking lecture slides for the type rule of `map`
