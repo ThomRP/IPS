@@ -1,2 +1,0 @@
-fun bool main() =
-  not true

@@ -223,12 +223,22 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         let code2 = compileExp e2 vtable t2
         code1 @ code2 @ [ MUL(place, t1, t2) ]
 
-    | Divide(e1, e2, pos) ->
+    | Divide(e1, e2, (line, _)) ->
         let t1 = newReg "divide_L"
         let t2 = newReg "divide_R"
         let code1 = compileExp e1 vtable t1
         let code2 = compileExp e2 vtable t2
-        code1 @ code2 @ [ DIV(place, t1, t2) ]
+
+        let safe_lab = newLab "safe"
+
+        let checksize =
+            [ BNE(t2, Rzero, safe_lab)
+              LI(Ra0, line)
+              LA(Ra1, "m.DivZero")
+              J "p.RuntimeError"
+              LABEL(safe_lab) ]
+
+        code1 @ code2 @ checksize @ [ DIV(place, t1, t2) ]
 
     | Not(e1, pos) ->
         let t1 = newReg "NOT_exp"
@@ -325,14 +335,26 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         let t2 = newReg "lt_R"
         let code1 = compileExp e1 vtable t1
         let code2 = compileExp e2 vtable t2
-        code1 @ code2 @ [ AND(place, t1, t2) ]
+        let sc_l = newLab "sc_l"
+        let end_l = newLab "end_l"
+
+        code1
+        @ [ BEQ(Rzero, t1, sc_l) ]
+        @ code2
+        @ [ AND(place, t1, t2); J end_l; LABEL sc_l; MV(place, Rzero); LABEL end_l ]
 
     | Or(e1, e2, pos) ->
         let t1 = newReg "lt_L"
         let t2 = newReg "lt_R"
         let code1 = compileExp e1 vtable t1
         let code2 = compileExp e2 vtable t2
-        code1 @ code2 @ [ OR(place, t1, t2) ]
+        let sc_l = newLab "sc_l"
+        let end_l = newLab "end_l"
+
+        code1
+        @ [ BNE(Rzero, t1, sc_l) ]
+        @ code2
+        @ [ OR(place, t1, t2); J end_l; LABEL sc_l; ADDI(place, Rzero, 1); LABEL end_l ]
 
     (* Indexing:
      1. generate code to compute the index
@@ -560,7 +582,9 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         let mutable loop_iota = []
         let mutable loop_footer = []
 
-        if a_type = Int then
+        match a_type with
+        | Int
+        | Array _ ->
             loop_iota <- [ SW(a_reg, addr_reg, 0) ]
 
             loop_footer <-
@@ -568,7 +592,7 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
                   ADDI(i_reg, i_reg, 1)
                   J loop_beg
                   LABEL loop_end ]
-        else
+        | _ ->
             loop_iota <- [ SB(a_reg, addr_reg, 0) ]
 
             loop_footer <-
@@ -606,7 +630,56 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
          counter computed in step (c). You do this of course with a
          `SW(counter_reg, place, 0)` instruction.
   *)
-    | Filter(_, _, _, _) -> failwith "Unimplemented code generation of filter"
+    | Filter(farg, arr_exp, elem_type, pos) ->
+        let size_reg = newReg "size" (* size of input/output array *)
+        let arr_reg = newReg "arr" (* address of array *)
+        let elem_reg = newReg "elem" (* address of current element *)
+        let res_reg = newReg "res"
+        let tmp_reg = newReg "tmp"
+        let arr_code = compileExp arr_exp vtable arr_reg
+
+        let get_size = [ LW(size_reg, arr_reg, 0) ]
+
+        let addr_reg = newReg "addrg" (* address of element in new array *)
+        let i_reg = newReg "i"
+        let j_reg = newReg "j"
+
+        let init_regs =
+            [ ADDI(addr_reg, place, 4)
+              MV(i_reg, Rzero)
+              MV(j_reg, Rzero)
+              ADDI(elem_reg, arr_reg, 4) ]
+
+        let loop_beg = newLab "loop_beg"
+        let loop_foot = newLab "loop_foot"
+        let loop_end = newLab "loop_end"
+        let loop_header = [ LABEL(loop_beg); BGE(i_reg, size_reg, loop_end) ]
+        (* map is 'arr[i] = f(old_arr[i])'. *)
+        let elem_size = getElemSize elem_type
+
+        let loop_map =
+            [ Load elem_size (tmp_reg, elem_reg, 0)
+              ADDI(elem_reg, elem_reg, elemSizeToInt elem_size) ]
+            @ applyFunArg (farg, [ tmp_reg ], vtable, res_reg, pos)
+            @ [ BEQ(res_reg, Rzero, loop_foot)
+                Store elem_size (tmp_reg, addr_reg, 0)
+                ADDI(addr_reg, addr_reg, elemSizeToInt elem_size)
+                ADDI(j_reg, j_reg, 1) ]
+
+        let loop_footer =
+            [ LABEL loop_foot; ADDI(i_reg, i_reg, 1); J loop_beg; LABEL loop_end ]
+
+        let filterend = [ SW(j_reg, place, 0) ]
+
+        arr_code
+        @ get_size
+        @ dynalloc (size_reg, place, elem_type)
+        @ init_regs
+        @ loop_header
+        @ loop_map
+        @ loop_footer
+        @ filterend
+
 
     (* TODO project task 2: see also the comment to replicate.
      `scan(f, ne, arr)`: you can inspire yourself from the implementation of
@@ -615,7 +688,51 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         the current location of the result iterator at every iteration of
         the loop.
   *)
-    | Scan(_, _, _, _, _) -> failwith "Unimplemented code generation of scan"
+    | Scan(binop, acc_exp, arr_exp, tp, pos) ->
+        let arr_reg = newReg "arr" (* address of array *)
+        let size_reg = newReg "size" (* size of input array *)
+        let i_reg = newReg "ind_var" (* loop counter *)
+        let tmp1_reg = newReg "tmp1" (* several purposes *)
+        let tmp2_reg = newReg "tmp2" (* several purposes *)
+        let loop_beg = newLab "loop_beg"
+        let loop_end = newLab "loop_end"
+        let addr_reg = newReg "addrg" (* address of element in new array *)
+
+        let arr_code = compileExp arr_exp vtable arr_reg
+        let get_size = [ LW(size_reg, arr_reg, 0) ]
+
+        (* Compile initial value into place (will be updated below) *)
+        let acc_code = compileExp acc_exp vtable tmp2_reg
+
+        let elem_size = getElemSize tp
+        (* Set arr_reg to address of first element instead. *)
+        (* Set i_reg to 0. While i < size_reg, loop. *)
+        let loop_code =
+            [ ADDI(addr_reg, place, 4)
+              ADDI(arr_reg, arr_reg, 4)
+              MV(i_reg, Rzero)
+              LABEL(loop_beg)
+              BGE(i_reg, size_reg, loop_end) ]
+        (* Load arr[i] into tmp_reg *)
+
+
+        let load_code =
+            [ Load elem_size (tmp1_reg, arr_reg, 0)
+              ADDI(arr_reg, arr_reg, elemSizeToInt elem_size) ]
+        (* place := binop(place, tmp_reg) *)
+        let apply_code =
+            applyFunArg (binop, [ tmp1_reg; tmp2_reg ], vtable, tmp2_reg, pos)
+            @ [ Store elem_size (tmp2_reg, addr_reg, 0)
+                ADDI(addr_reg, addr_reg, elemSizeToInt elem_size) ]
+
+        arr_code
+        @ get_size
+        @ dynalloc (size_reg, place, tp)
+        @ acc_code
+        @ loop_code
+        @ load_code
+        @ apply_code
+        @ [ ADDI(i_reg, i_reg, 1); J loop_beg; LABEL loop_end ]
 
 and applyFunArg (ff: TypedFunArg, args: reg list, vtable: VarTable, place: reg, pos: Position) : Instruction list =
     match ff with
@@ -814,4 +931,4 @@ let compile (funs: TypedProg) : Instruction list =
         (* Note: no overflow checks... *)
         @ [ ALIGN 2; COMMENT "Space for Fasto heap"; LABEL "d.heap"; SPACE 100000 ]
 
-  
+    main_prog

@@ -1,9 +1,0 @@
-fun bool write_int(bool x) = write(x)
-
-fun [bool] write_int_arr([bool] x) = map(write_int, x)
-
-
-fun [bool] main() =
-  let x = replicate(7,true) in
-  write_int_arr(x)
-  
