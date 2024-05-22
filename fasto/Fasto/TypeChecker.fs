@@ -1,4 +1,3 @@
-
 (* A type-checker for Fasto. *)
 
 module TypeChecker
@@ -169,10 +168,19 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
 
     | Not(e1, pos) ->
         let (t1, t_exp) = checkExp ftab vtab e1
-        (Bool, Not(t_exp, pos))
+
+        if t1 <> Bool then
+            reportTypeWrong "argument of not" Bool t1 pos
+
+        (t1, Not(t_exp, pos))
+
     | Negate(e1, pos) ->
         let (t1, t_exp) = checkExp ftab vtab e1
-        (Int, Negate(t_exp, pos))
+
+        if t1 <> Int then
+            reportTypeWrong "argument of not" Int t1 pos
+
+        (t1, Negate(t_exp, pos))
 
     (* The types for e1, e2 must be the same. The result is always a Bool. *)
     | Equal(e1, e2, pos) ->
@@ -339,16 +347,6 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
 
         (f_argres_type, Reduce(f', e_dec, arr_dec, elem_type, pos))
 
-    (* TODO project task 2:
-        See `AbSyn.fs` for the expression constructors of
-        `Replicate`, `Filter`, `Scan`.
-
-        Hints for `replicate(n, a)`:
-        - recursively type check `n` and `a`
-        - check that `n` has integer type
-        - assuming `a` is of type `t` the result type
-          of replicate is `[t]`
-    *)
     | Replicate(n_exp, a_exp, _, pos) ->
         let (n_type, n_exp_dec) = checkExp ftab vtab n_exp
         let (a_type, a_exp_dec) = checkExp ftab vtab a_exp
@@ -356,27 +354,53 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
         if n_type <> Int then
             reportTypeWrong "argument of iota" Int n_type pos
 
-
         (Array a_type, Replicate(n_exp_dec, a_exp_dec, a_type, pos))
 
-    (* TODO project task 2: Hint for `filter(f, arr)`
-        Look into the type-checking lecture slides for the type rule of `map`
-        and think of what needs to be changed for filter (?)
-        Use `checkFunArg` to get the signature of the function argument `f`.
-        Check that:
-            - `f` has type `ta -> Bool`
-            - `arr` should be of type `[ta]`
-            - the result of filter should have type `[ta]`
-    *)
-    | Filter(_, _, _, _) -> failwith "Unimplemented type check of filter"
+    | Filter(f, arr_exp, _, pos) ->
+        let (arr_type, arr_exp_dec) = checkExp ftab vtab arr_exp
 
-    (* TODO project task 2: `scan(f, ne, arr)`
-        Hint: Implementation is very similar to `reduce(f, ne, arr)`.
-              (The difference between `scan` and `reduce` is that
-              scan's return type is the same as the type of `arr`,
-              while reduce's return type is that of an element of `arr`).
-    *)
-    | Scan(_, _, _, _, _) -> failwith "Unimplemented type check of scan"
+        let elem_type =
+            match arr_type with
+            | Array t -> t
+            | _ -> reportTypeWrongKind "second argument of map" "array" arr_type pos
+
+
+        let (f', f_res_type, f_arg_type) =
+            match checkFunArg ftab vtab pos f with
+            | (f', res, [ a1 ]) -> (f', Bool, a1)
+            | (_, res, args) -> reportArityWrong "first argument of map" 1 (args, res) pos
+
+        if elem_type <> f_arg_type then
+            reportTypesDifferent "function-argument and array-element types in map" f_arg_type elem_type pos
+
+        (Array f_arg_type, Filter(f', arr_exp_dec, elem_type, pos))
+
+    | Scan(f, e_exp, arr_exp, _, pos) ->
+        let (e_type, e_dec) = checkExp ftab vtab e_exp
+        let (arr_type, arr_dec) = checkExp ftab vtab arr_exp
+
+        let elem_type =
+            match arr_type with
+            | Array t -> t
+            | _ -> reportTypeWrongKind "third argument of reduce" "array" arr_type pos
+
+        let (f', f_argres_type) =
+            match checkFunArg ftab vtab pos f with
+            | (f', res, [ a1; a2 ]) ->
+                if a1 <> a2 then
+                    reportTypesDifferent "argument types of operation in reduce" a1 a2 pos
+
+                if res <> a1 then
+                    reportTypesDifferent "argument and return type of operation in reduce" a1 res pos
+
+                (f', res)
+            | (_, res, args) -> reportArityWrong "operation in reduce" 2 (args, res) pos
+
+        if e_type <> f_argres_type then
+            reportTypesDifferent "operation and start-element types in scan" f_argres_type e_type pos
+
+        (arr_type, Scan(f', e_dec, arr_dec, elem_type, pos))
+
 
 and checkFunArg
     (ftab: FunTable)

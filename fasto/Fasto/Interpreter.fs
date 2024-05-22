@@ -167,7 +167,11 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         let res2 = evalExp (e2, vtab, ftab)
 
         match (res1, res2) with
-        | (IntVal n1, IntVal n2) -> IntVal(n1 / n2)
+        | (IntVal n1, IntVal n2) ->
+            if n2 <> 0 then
+                IntVal(n1 / n2)
+            else
+                raise (MyError("Trying to divide by 0 ", pos))
         | (IntVal _, _) -> reportWrongType "right operand of /" Int res2 (expPos e2)
         | (_, _) -> reportWrongType "left operand of /" Int res1 (expPos e1)
 
