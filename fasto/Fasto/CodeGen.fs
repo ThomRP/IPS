@@ -246,7 +246,7 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         code1 @ [ XORI(place, t1, 1) ]
 
     | Negate(e1, pos) ->
-        let t1 = newReg "NOT_exp"
+        let t1 = newReg "NEGATE_exp"
         let code1 = compileExp e1 vtable t1
         code1 @ [ SUB(place, Rzero, t1) ]
 
@@ -331,8 +331,8 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         let code2 = compileExp e2 vtable t2
         code1 @ code2 @ [ SLT(place, t1, t2) ]
     | And(e1, e2, pos) ->
-        let t1 = newReg "lt_L"
-        let t2 = newReg "lt_R"
+        let t1 = newReg "and_L"
+        let t2 = newReg "and_R"
         let code1 = compileExp e1 vtable t1
         let code2 = compileExp e2 vtable t2
         let sc_l = newLab "sc_l"
@@ -344,8 +344,8 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         @ [ AND(place, t1, t2); J end_l; LABEL sc_l; MV(place, Rzero); LABEL end_l ]
 
     | Or(e1, e2, pos) ->
-        let t1 = newReg "lt_L"
-        let t2 = newReg "lt_R"
+        let t1 = newReg "or_L"
+        let t2 = newReg "or_R"
         let code1 = compileExp e1 vtable t1
         let code2 = compileExp e2 vtable t2
         let sc_l = newLab "sc_l"
@@ -549,16 +549,10 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
   *)
     | Replicate(n_exp, a_exp, a_type, (line, _)) ->
         let size_reg = newReg "size"
-        let n_code = compileExp n_exp vtable size_reg
         let a_reg = newReg "a"
-        let a_code = compileExp a_exp vtable a_reg
-        (* size_reg is now the integer n. *)
+        let addr_reg = newReg "addr"
+        let i_reg = newReg "i"
 
-        (* Check that array size N >= 0:
-         if N >= 0 then jumpto safe_lab
-         jumpto "_IllegalArrSizeError_"
-         safe_lab: ...
-      *)
         let safe_lab = newLab "safe"
 
         let checksize =
@@ -568,24 +562,22 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
               J "p.RuntimeError"
               LABEL(safe_lab) ]
 
-        let addr_reg = newReg "addr"
-        let i_reg = newReg "i"
-        let init_regs = [ ADDI(addr_reg, place, 4); MV(i_reg, Rzero) ]
-        (* addr_reg is now the position of the first array element. *)
+        let n_code = compileExp n_exp vtable size_reg
+        let a_code = compileExp a_exp vtable a_reg
 
-        (* Run a loop.  Keep jumping back to loop_beg until it is not the
-         case that i_reg < size_reg, and then jump to loop_end. *)
+        let init_regs = [ ADDI(addr_reg, place, 4); MV(i_reg, Rzero) ]
+
         let loop_beg = newLab "loop_beg"
         let loop_end = newLab "loop_end"
         let loop_header = [ LABEL(loop_beg); BGE(i_reg, size_reg, loop_end) ]
-        (* iota is just 'arr[i] = i'.  arr[i] is addr_reg. *)
-        let mutable loop_iota = []
+
+        let mutable loop_replicate = []
         let mutable loop_footer = []
 
         match a_type with
         | Int
         | Array _ ->
-            loop_iota <- [ SW(a_reg, addr_reg, 0) ]
+            loop_replicate <- [ SW(a_reg, addr_reg, 0) ]
 
             loop_footer <-
                 [ ADDI(addr_reg, addr_reg, 4)
@@ -593,7 +585,7 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
                   J loop_beg
                   LABEL loop_end ]
         | _ ->
-            loop_iota <- [ SB(a_reg, addr_reg, 0) ]
+            loop_replicate <- [ SB(a_reg, addr_reg, 0) ]
 
             loop_footer <-
                 [ ADDI(addr_reg, addr_reg, 1)
@@ -611,7 +603,7 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         @ dynalloc (size_reg, place, a_type)
         @ init_regs
         @ loop_header
-        @ loop_iota
+        @ loop_replicate
         @ loop_footer
 
 
@@ -654,10 +646,9 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         let loop_foot = newLab "loop_foot"
         let loop_end = newLab "loop_end"
         let loop_header = [ LABEL(loop_beg); BGE(i_reg, size_reg, loop_end) ]
-        (* map is 'arr[i] = f(old_arr[i])'. *)
         let elem_size = getElemSize elem_type
 
-        let loop_map =
+        let loop_filter =
             [ Load elem_size (tmp_reg, elem_reg, 0)
               ADDI(elem_reg, elem_reg, elemSizeToInt elem_size) ]
             @ applyFunArg (farg, [ tmp_reg ], vtable, res_reg, pos)
@@ -676,7 +667,7 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
         @ dynalloc (size_reg, place, elem_type)
         @ init_regs
         @ loop_header
-        @ loop_map
+        @ loop_filter
         @ loop_footer
         @ filterend
 
@@ -713,7 +704,7 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
               MV(i_reg, Rzero)
               LABEL(loop_beg)
               BGE(i_reg, size_reg, loop_end) ]
-        (* Load arr[i] into tmp_reg *)
+        (* Load arr[i] into tmp1_reg *)
 
 
         let load_code =
