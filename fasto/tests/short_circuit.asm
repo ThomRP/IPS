@@ -20,14 +20,14 @@ f.main:
 	sw	x18, -8(x2)
 	addi	x2, x2, -8
 	li	x18, 0
-# was:	li	_lt_L_5_, 0
+# was:	li	_and_L_5_, 0
 	beq	x0, x18, l.sc_l_7_
-# was:	beq	x0, _lt_L_5_, l.sc_l_7_
+# was:	beq	x0, _and_L_5_, l.sc_l_7_
 	jal	f.no_way
 # was:	jal	f.no_way, 
-# 	mv	_lt_R_6_,x10
+# 	mv	_and_R_6_,x10
 	and	x11, x18, x10
-# was:	and	_tmp_4_, _lt_L_5_, _lt_R_6_
+# was:	and	_tmp_4_, _and_L_5_, _and_R_6_
 	j	l.end_l_8_
 l.sc_l_7_:
 	mv	x11, x0
@@ -44,14 +44,14 @@ l.wBoolF_9_:
 	jal	p.putstring
 # was:	jal	p.putstring, x10
 	li	x18, 1
-# was:	li	_lt_L_12_, 1
+# was:	li	_or_L_12_, 1
 	bne	x0, x18, l.sc_l_14_
-# was:	bne	x0, _lt_L_12_, l.sc_l_14_
+# was:	bne	x0, _or_L_12_, l.sc_l_14_
 	jal	f.no_way
 # was:	jal	f.no_way, 
-# 	mv	_lt_R_13_,x10
+# 	mv	_or_R_13_,x10
 	or	x11, x18, x10
-# was:	or	_tmp_11_, _lt_L_12_, _lt_R_13_
+# was:	or	_tmp_11_, _or_L_12_, _or_R_13_
 	j	l.end_l_15_
 l.sc_l_14_:
 	addi	x11, x0, 1
