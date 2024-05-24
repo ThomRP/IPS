@@ -178,7 +178,7 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
         let (t1, t_exp) = checkExp ftab vtab e1
 
         if t1 <> Int then
-            reportTypeWrong "argument of not" Int t1 pos
+            reportTypeWrong "argument of negate" Int t1 pos
 
         (t1, Negate(t_exp, pos))
 
@@ -352,7 +352,7 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
         let (a_type, a_exp_dec) = checkExp ftab vtab a_exp
 
         if n_type <> Int then
-            reportTypeWrong "argument of iota" Int n_type pos
+            reportTypeWrong "argument of replicate" Int n_type pos
 
         (Array a_type, Replicate(n_exp_dec, a_exp_dec, a_type, pos))
 
@@ -362,16 +362,16 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
         let elem_type =
             match arr_type with
             | Array t -> t
-            | _ -> reportTypeWrongKind "second argument of map" "array" arr_type pos
+            | _ -> reportTypeWrongKind "second argument of filter" "array" arr_type pos
 
 
         let (f', f_res_type, f_arg_type) =
             match checkFunArg ftab vtab pos f with
             | (f', res, [ a1 ]) -> (f', Bool, a1)
-            | (_, res, args) -> reportArityWrong "first argument of map" 1 (args, res) pos
+            | (_, res, args) -> reportArityWrong "first argument of filter" 1 (args, res) pos
 
         if elem_type <> f_arg_type then
-            reportTypesDifferent "function-argument and array-element types in map" f_arg_type elem_type pos
+            reportTypesDifferent "function-argument and array-element types in filter" f_arg_type elem_type pos
 
         (Array f_arg_type, Filter(f', arr_exp_dec, elem_type, pos))
 
@@ -382,19 +382,19 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
         let elem_type =
             match arr_type with
             | Array t -> t
-            | _ -> reportTypeWrongKind "third argument of reduce" "array" arr_type pos
+            | _ -> reportTypeWrongKind "third argument of scan" "array" arr_type pos
 
         let (f', f_argres_type) =
             match checkFunArg ftab vtab pos f with
             | (f', res, [ a1; a2 ]) ->
                 if a1 <> a2 then
-                    reportTypesDifferent "argument types of operation in reduce" a1 a2 pos
+                    reportTypesDifferent "argument types of operation in scan" a1 a2 pos
 
                 if res <> a1 then
-                    reportTypesDifferent "argument and return type of operation in reduce" a1 res pos
+                    reportTypesDifferent "argument and return type of operation in scan" a1 res pos
 
                 (f', res)
-            | (_, res, args) -> reportArityWrong "operation in reduce" 2 (args, res) pos
+            | (_, res, args) -> reportArityWrong "operation in scan" 2 (args, res) pos
 
         if e_type <> f_argres_type then
             reportTypesDifferent "operation and start-element types in scan" f_argres_type e_type pos

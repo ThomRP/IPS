@@ -213,8 +213,8 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         let res1 = evalExp (e, vtab, ftab)
 
         match (res1) with
-        | (IntVal n1) -> if (n1 <> 0) then IntVal 0 else IntVal 1
-        | (_) -> reportWrongType "operand of Negate" Bool res1 (expPos e)
+        | (IntVal n1) -> IntVal(0 - n1)
+        | (_) -> reportWrongType "operand of Negate" Int res1 (expPos e)
 
     | Equal(e1, e2, pos) ->
         let r1 = evalExp (e1, vtab, ftab)
@@ -309,7 +309,6 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         let sz = evalExp (n, vtab, ftab)
         let arr = evalExp (a, vtab, ftab)
 
-
         match sz with
         | IntVal size ->
             if size >= 0 then
@@ -330,12 +329,12 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
         let farg_ret_type = rtpFunArg farg ftab pos
 
         if (farg_ret_type <> Bool) then
-            failwith "1st argument of \"filter\" exptedet to be bool"
+            failwith "1st argument of \"filter\" expected to be bool"
 
         let extractBool value =
             match value with
             | BoolVal b -> b
-            | _ -> failwith "Expected a BoolValue"
+            | _ -> failwith "expected a BoolValue"
 
         match (arr) with
         | (ArrayVal(lst, tp1)) ->
@@ -356,7 +355,7 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
                 List.scan (fun acc x -> evalFunArg (farg, vtab, ftab, pos, [ acc; x ])) nel lst
 
             ArrayVal(mlst, tp1)
-        | otherwise -> reportNonArray "3rd argument of \"reduce\"" arr pos
+        | otherwise -> reportNonArray "3rd argument of \"scan\"" arr pos
 
 
     | Read(t, p) ->
