@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/mnt/c/Users/gusta/OneDrive/Desktop/git/IPS/fasto/Fasto/Fasto.fsproj": {}
+    "/mnt/c/Users/gusta/OneDrive/Desktop/git/ips/fasto/Fasto/Fasto.fsproj": {}
   },
   "projects": {
-    "/mnt/c/Users/gusta/OneDrive/Desktop/git/IPS/fasto/Fasto/Fasto.fsproj": {
+    "/mnt/c/Users/gusta/OneDrive/Desktop/git/ips/fasto/Fasto/Fasto.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/mnt/c/Users/gusta/OneDrive/Desktop/git/IPS/fasto/Fasto/Fasto.fsproj",
+        "projectUniqueName": "/mnt/c/Users/gusta/OneDrive/Desktop/git/ips/fasto/Fasto/Fasto.fsproj",
         "projectName": "Fasto",
-        "projectPath": "/mnt/c/Users/gusta/OneDrive/Desktop/git/IPS/fasto/Fasto/Fasto.fsproj",
+        "projectPath": "/mnt/c/Users/gusta/OneDrive/Desktop/git/ips/fasto/Fasto/Fasto.fsproj",
         "packagesPath": "/home/gustav/.nuget/packages/",
-        "outputPath": "/mnt/c/Users/gusta/OneDrive/Desktop/git/IPS/fasto/Fasto/obj/",
+        "outputPath": "/mnt/c/Users/gusta/OneDrive/Desktop/git/ips/fasto/Fasto/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/gustav/.nuget/NuGet/NuGet.Config"

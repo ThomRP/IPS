@@ -40,14 +40,14 @@ f.main:
 # was:	li	_size_7_, 7
 	li	x12, 0
 # was:	li	_a_8_, 0
-	bge	x11, x0, l.safe_9_
-# was:	bge	_size_7_, x0, l.safe_9_
+	bge	x11, x0, l.safe_11_
+# was:	bge	_size_7_, x0, l.safe_11_
 	li	x10, 4
 # was:	li	x10, 4
 	la	x11, m.BadSize
 # was:	la	x11, m.BadSize
 	j	p.RuntimeError
-l.safe_9_:
+l.safe_11_:
 	mv	x10, x3
 # was:	mv	_let_fs_6_, x3
 	addi	x13, x11, 3
@@ -61,18 +61,18 @@ l.safe_9_:
 	sw	x11, 0(x10)
 # was:	sw	_size_7_, 0(_let_fs_6_)
 	addi	x13, x10, 4
-# was:	addi	_addr_10_, _let_fs_6_, 4
+# was:	addi	_addr_9_, _let_fs_6_, 4
 	mv	x14, x0
-# was:	mv	_i_11_, x0
+# was:	mv	_i_10_, x0
 l.loop_beg_12_:
 	bge	x14, x11, l.loop_end_13_
-# was:	bge	_i_11_, _size_7_, l.loop_end_13_
+# was:	bge	_i_10_, _size_7_, l.loop_end_13_
 	sb	x12, 0(x13)
-# was:	sb	_a_8_, 0(_addr_10_)
+# was:	sb	_a_8_, 0(_addr_9_)
 	addi	x13, x13, 1
-# was:	addi	_addr_10_, _addr_10_, 1
+# was:	addi	_addr_9_, _addr_9_, 1
 	addi	x14, x14, 1
-# was:	addi	_i_11_, _i_11_, 1
+# was:	addi	_i_10_, _i_10_, 1
 	j	l.loop_beg_12_
 l.loop_end_13_:
 # 	mv	_arr_16_,_let_fs_6_
