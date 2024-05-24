@@ -50,7 +50,6 @@ type UntypedExpFun = AbSyn.UntypedExp -> AbSyn.UntypedExp
 %type <AbSyn.UntypedExp> Exp
 %type <AbSyn.UntypedExp list> Exps
 %type <AbSyn.UntypedFunArg> FunArg
-// TODO: Task 1(b): add any new nonterminals here
 %type <UntypedExpFun> Decs Dec
 
 %%
