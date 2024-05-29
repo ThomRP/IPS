@@ -3,63 +3,29 @@
 	jal	f.main
 	jal	p.stop
 # User functions
-# Function no_way
-f.no_way:
-	sw	x1, -4(x2)
-	addi	x2, x2, -4
-	jal	f.no_way
-# was:	jal	f.no_way, 
-# 	mv	_no_wayres_1_,x10
-# 	mv	x10,_no_wayres_1_
-	addi	x2, x2, 4
-	lw	x1, -4(x2)
-	jr	x1
 # Function main
 f.main:
 	sw	x1, -4(x2)
-	sw	x18, -8(x2)
-	addi	x2, x2, -8
-	li	x11, 0
-# was:	li	_tmp_4_, 0
-# 	mv	_let_a_3_,_tmp_4_
-	la	x10, s.true
-# was:	la	x10, s.true
-	bne	x11, x0, l.wBoolF_5_
-# was:	bne	_let_a_3_, x0, l.wBoolF_5_
-	la	x10, s.false
-# was:	la	x10, s.false
-l.wBoolF_5_:
-	jal	p.putstring
-# was:	jal	p.putstring, x10
-	li	x18, 1
-# was:	li	_or_L_8_, 1
-	bne	x0, x18, l.sc_l_10_
-# was:	bne	x0, _or_L_8_, l.sc_l_10_
-	jal	f.no_way
-# was:	jal	f.no_way, 
-# 	mv	_or_R_9_,x10
-	or	x11, x18, x10
-# was:	or	_tmp_7_, _or_L_8_, _or_R_9_
-	j	l.end_l_11_
-l.sc_l_10_:
-	addi	x11, x0, 1
-# was:	addi	_tmp_7_, x0, 1
-l.end_l_11_:
-# 	mv	_let_b_6_,_tmp_7_
-	la	x10, s.true
-# was:	la	x10, s.true
-	bne	x11, x0, l.wBoolF_12_
-# was:	bne	_let_b_6_, x0, l.wBoolF_12_
-	la	x10, s.false
-# was:	la	x10, s.false
-l.wBoolF_12_:
-	jal	p.putstring
-# was:	jal	p.putstring, x10
-	li	x10, 1
-# was:	li	_mainres_2_, 1
-# 	mv	x10,_mainres_2_
-	addi	x2, x2, 8
-	lw	x18, -8(x2)
+	addi	x2, x2, -4
+	jal	p.getint
+# was:	jal	p.getint, 
+	mv	x11, x10
+# was:	mv	_let_n_2_, x10
+	li	x10, 3
+# was:	li	_divide_L_3_, 3
+# 	mv	_divide_R_4_,_let_n_2_
+	bne	x11, x0, l.safe_5_
+# was:	bne	_divide_R_4_, x0, l.safe_5_
+	li	x10, 2
+# was:	li	x10, 2
+	la	x11, m.DivZero
+# was:	la	x11, m.DivZero
+	j	p.RuntimeError
+l.safe_5_:
+	div	x10, x10, x11
+# was:	div	_mainres_1_, _divide_L_3_, _divide_R_4_
+# 	mv	x10,_mainres_1_
+	addi	x2, x2, 4
 	lw	x1, -4(x2)
 	jr	x1
 # Library functions in Fasto namespace

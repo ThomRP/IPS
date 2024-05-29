@@ -60,7 +60,7 @@ let rec removeDeadBindingsInExp (e: TypedExp) : (bool * DBRtab * TypedExp) =
     | ArrayLit(es, t, pos) ->
         let (ios, uses, es') = unzip3 (List.map removeDeadBindingsInExp es)
         (anytrue ios, List.fold SymTab.combine (SymTab.empty ()) uses, ArrayLit(es', t, pos))
-    | Var(name, pos) -> (false, SymTab.empty (), Var(name, pos))
+    | Var(name, pos) -> (false, SymTab.bind name () (SymTab.empty ()), Var(name, pos))
     | Plus(x, y, pos) ->
         let (xios, xuses, x') = removeDeadBindingsInExp x
         let (yios, yuses, y') = removeDeadBindingsInExp y
@@ -97,7 +97,7 @@ let rec removeDeadBindingsInExp (e: TypedExp) : (bool * DBRtab * TypedExp) =
     | Index(name, e, t, pos) ->
 
         let (eios, euses, e') = removeDeadBindingsInExp e
-        (eios, euses, Index(name, e', t, pos))
+        (eios, (SymTab.bind name () euses), Index(name, e', t, pos))
 
     | Let(Dec(name, e, decpos), body, pos) ->
         let (eios, euses, e') = removeDeadBindingsInExp e

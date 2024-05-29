@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "rU0ka0TNIGs=",
+  "dgSpecHash": "DTk9RidJmzk=",
   "success": true,
-  "projectFilePath": "/mnt/c/Users/gusta/OneDrive/Desktop/git/ips/fasto/Fasto/Fasto.fsproj",
+  "projectFilePath": "/mnt/c/Users/gusta/OneDrive/Desktop/git/IPS/fasto/Fasto/Fasto.fsproj",
   "expectedPackageFiles": [
     "/home/gustav/.nuget/packages/fsharp.core/8.0.300/fsharp.core.8.0.300.nupkg.sha512",
     "/home/gustav/.nuget/packages/fslexyacc/11.2.0/fslexyacc.11.2.0.nupkg.sha512",
