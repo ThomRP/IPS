@@ -354,7 +354,8 @@ let rec evalExp (e: UntypedExp, vtab: VarTable, ftab: FunTable) : Value =
             let mlst =
                 List.scan (fun acc x -> evalFunArg (farg, vtab, ftab, pos, [ acc; x ])) nel lst
 
-            ArrayVal(mlst, tp1)
+            let lst = mlst[1..]
+            ArrayVal(lst, tp1)
         | otherwise -> reportNonArray "3rd argument of \"scan\"" arr pos
 
 
