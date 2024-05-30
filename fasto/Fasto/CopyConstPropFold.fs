@@ -46,10 +46,7 @@ let rec copyConstPropFoldExp (vtable: VarTable) (e: TypedExp) =
             let vtable' = SymTab.bind name (ConstProp(a)) vtable
             let body' = copyConstPropFoldExp vtable' body
             Let(Dec(name, ed', decpos), body', pos)
-        | Let(Dec(y, e1, posy), e2, _) ->
-            let e1' = copyConstPropFoldExp vtable e1
-            let e2' = copyConstPropFoldExp vtable e2
-            Let(Dec(y, e1', decpos), e2', pos)
+        | Let(Dec(y, e1, posy), e2, _) -> Let(Dec(y, e1, posy), (Let(Dec(name, e2, decpos), body, pos)), pos)
 
 
         | _ -> (* Fallthrough - for everything else, do nothing *)
