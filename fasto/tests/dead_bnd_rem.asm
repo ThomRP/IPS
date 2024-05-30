@@ -6,31 +6,36 @@
 # Function main
 f.main:
 	sw	x1, -4(x2)
-	addi	x2, x2, -4
+	sw	x18, -8(x2)
+	addi	x2, x2, -8
 	jal	p.getint
 # was:	jal	p.getint, 
-# 	mv	_let_y_2_,x10
-	mv	x11, x10
-# was:	mv	_times_L_4_, _let_y_2_
-# 	mv	_times_R_5_,_let_y_2_
-	mul	x12, x11, x10
-# was:	mul	_let_x_3_, _times_L_4_, _times_R_5_
-# 	mv	_plus_L_7_,_let_x_3_
+	mv	x12, x10
+# was:	mv	_let_y_2_, x10
+# 	mv	_plus_L_4_,_let_y_2_
+	li	x10, 2
+# was:	li	_plus_R_5_, 2
+	add	x10, x12, x10
+# was:	add	_let_x_3_, _plus_L_4_, _plus_R_5_
+# 	mv	_plus_L_8_,_let_y_2_
 	li	x11, 3
-# was:	li	_plus_R_8_, 3
+# was:	li	_plus_R_9_, 3
 	add	x11, x12, x11
-# was:	add	_let_x_6_, _plus_L_7_, _plus_R_8_
-# 	mv	_plus_L_10_,_let_x_6_
-# 	mv	_plus_R_11_,_let_y_2_
-	add	x11, x11, x10
-# was:	add	_let_x_9_, _plus_L_10_, _plus_R_11_
-# 	mv	_plus_L_12_,_let_x_9_
-	li	x10, 8
-# was:	li	_plus_R_13_, 8
-	add	x10, x11, x10
-# was:	add	_mainres_1_, _plus_L_12_, _plus_R_13_
-# 	mv	x10,_mainres_1_
-	addi	x2, x2, 4
+# was:	add	_let_y_7_, _plus_L_8_, _plus_R_9_
+# 	mv	_times_L_10_,_let_x_3_
+# 	mv	_times_R_11_,_let_y_7_
+	mul	x18, x10, x11
+# was:	mul	_let_v_6_, _times_L_10_, _times_R_11_
+# 	mv	_tmp_12_,_let_v_6_
+# 	mv	_mainres_1_,_tmp_12_
+	mv	x10, x18
+# was:	mv	x10, _mainres_1_
+	jal	p.putint
+# was:	jal	p.putint, x10
+	mv	x10, x18
+# was:	mv	x10, _mainres_1_
+	addi	x2, x2, 8
+	lw	x18, -8(x2)
 	lw	x1, -4(x2)
 	jr	x1
 # Library functions in Fasto namespace

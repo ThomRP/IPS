@@ -16,8 +16,9 @@ f.main:
 	jal	p.getint
 # was:	jal	p.getint, 
 # 	mv	_let_N_2_,x10
-# 	mv	_size_4_,_let_N_2_
-	bge	x10, x0, l.safe_5_
+	mv	x11, x10
+# was:	mv	_size_4_, _let_N_2_
+	bge	x11, x0, l.safe_5_
 # was:	bge	_size_4_, x0, l.safe_5_
 	li	x10, 7
 # was:	li	x10, 7
@@ -27,26 +28,26 @@ f.main:
 l.safe_5_:
 	mv	x14, x3
 # was:	mv	_let_z_3_, x3
-	slli	x11, x10, 2
+	slli	x10, x11, 2
 # was:	slli	_tmp_10_, _size_4_, 2
-	addi	x11, x11, 4
+	addi	x10, x10, 4
 # was:	addi	_tmp_10_, _tmp_10_, 4
-	add	x3, x3, x11
+	add	x3, x3, x10
 # was:	add	x3, x3, _tmp_10_
-	sw	x10, 0(x14)
+	sw	x11, 0(x14)
 # was:	sw	_size_4_, 0(_let_z_3_)
-	addi	x12, x14, 4
+	addi	x10, x14, 4
 # was:	addi	_addr_6_, _let_z_3_, 4
-	mv	x11, x0
+	mv	x12, x0
 # was:	mv	_i_7_, x0
 l.loop_beg_8_:
-	bge	x11, x10, l.loop_end_9_
+	bge	x12, x11, l.loop_end_9_
 # was:	bge	_i_7_, _size_4_, l.loop_end_9_
-	sw	x11, 0(x12)
+	sw	x12, 0(x10)
 # was:	sw	_i_7_, 0(_addr_6_)
-	addi	x12, x12, 4
+	addi	x10, x10, 4
 # was:	addi	_addr_6_, _addr_6_, 4
-	addi	x11, x11, 1
+	addi	x12, x12, 1
 # was:	addi	_i_7_, _i_7_, 1
 	j	l.loop_beg_8_
 l.loop_end_9_:
@@ -72,17 +73,17 @@ l.loop_end_9_:
 l.loop_beg_18_:
 	bge	x13, x11, l.loop_end_19_
 # was:	bge	_i_17_, _size_12_, l.loop_end_19_
-	lw	x16, 0(x14)
+	lw	x15, 0(x14)
 # was:	lw	_res_15_, 0(_elem_14_)
 	addi	x14, x14, 4
 # was:	addi	_elem_14_, _elem_14_, 4
 # 	mv	_plus_L_21_,_res_15_
-	li	x15, 2
+	li	x16, 2
 # was:	li	_plus_R_22_, 2
-	add	x16, x16, x15
+	add	x15, x15, x16
 # was:	add	_fun_arg_res_20_, _plus_L_21_, _plus_R_22_
 # 	mv	_res_15_,_fun_arg_res_20_
-	sw	x16, 0(x12)
+	sw	x15, 0(x12)
 # was:	sw	_res_15_, 0(_addrg_16_)
 	addi	x12, x12, 4
 # was:	addi	_addrg_16_, _addrg_16_, 4
@@ -90,47 +91,87 @@ l.loop_beg_18_:
 # was:	addi	_i_17_, _i_17_, 1
 	j	l.loop_beg_18_
 l.loop_end_19_:
-# 	mv	_arr_25_,_let_x_I1_11_
+# 	mv	_arr_26_,_let_x_I1_11_
 	lw	x19, 0(x10)
-# was:	lw	_size_24_, 0(_arr_25_)
+# was:	lw	_size_25_, 0(_arr_26_)
 	mv	x18, x3
-# was:	mv	_mainres_1_, x3
+# was:	mv	_let_w_24_, x3
 	slli	x11, x19, 2
-# was:	slli	_tmp_34_, _size_24_, 2
+# was:	slli	_tmp_35_, _size_25_, 2
 	addi	x11, x11, 4
-# was:	addi	_tmp_34_, _tmp_34_, 4
+# was:	addi	_tmp_35_, _tmp_35_, 4
 	add	x3, x3, x11
-# was:	add	x3, x3, _tmp_34_
+# was:	add	x3, x3, _tmp_35_
 	sw	x19, 0(x18)
-# was:	sw	_size_24_, 0(_mainres_1_)
+# was:	sw	_size_25_, 0(_let_w_24_)
 	addi	x20, x18, 4
-# was:	addi	_addrg_28_, _mainres_1_, 4
+# was:	addi	_addrg_29_, _let_w_24_, 4
 	mv	x21, x0
-# was:	mv	_i_29_, x0
+# was:	mv	_i_30_, x0
 	addi	x22, x10, 4
-# was:	addi	_elem_26_, _arr_25_, 4
-l.loop_beg_30_:
-	bge	x21, x19, l.loop_end_31_
-# was:	bge	_i_29_, _size_24_, l.loop_end_31_
+# was:	addi	_elem_27_, _arr_26_, 4
+l.loop_beg_31_:
+	bge	x21, x19, l.loop_end_32_
+# was:	bge	_i_30_, _size_25_, l.loop_end_32_
 	lw	x23, 0(x22)
-# was:	lw	_res_27_, 0(_elem_26_)
+# was:	lw	_res_28_, 0(_elem_27_)
 	addi	x22, x22, 4
-# was:	addi	_elem_26_, _elem_26_, 4
-# 	mv	_tmp_33_,_res_27_
-# 	mv	_fun_arg_res_32_,_tmp_33_
+# was:	addi	_elem_27_, _elem_27_, 4
+# 	mv	_tmp_34_,_res_28_
+# 	mv	_fun_arg_res_33_,_tmp_34_
 	mv	x10, x23
-# was:	mv	x10, _fun_arg_res_32_
+# was:	mv	x10, _fun_arg_res_33_
 	jal	p.putint
 # was:	jal	p.putint, x10
-# 	mv	_res_27_,_fun_arg_res_32_
+# 	mv	_res_28_,_fun_arg_res_33_
 	sw	x23, 0(x20)
-# was:	sw	_res_27_, 0(_addrg_28_)
+# was:	sw	_res_28_, 0(_addrg_29_)
 	addi	x20, x20, 4
-# was:	addi	_addrg_28_, _addrg_28_, 4
+# was:	addi	_addrg_29_, _addrg_29_, 4
 	addi	x21, x21, 1
-# was:	addi	_i_29_, _i_29_, 1
-	j	l.loop_beg_30_
-l.loop_end_31_:
+# was:	addi	_i_30_, _i_30_, 1
+	j	l.loop_beg_31_
+l.loop_end_32_:
+	la	x10, s.X_38_
+# was:	la	_tmp_37_, s.X_38_
+# s.X_38_: string "\n"
+# 	mv	_let_nl_36_,_tmp_37_
+# 	mv	x10,_tmp_37_
+	jal	p.putstring
+# was:	jal	p.putstring, x10
+# 	mv	_arr_40_,_let_w_24_
+	lw	x10, 0(x18)
+# was:	lw	_size_41_, 0(_arr_40_)
+	li	x11, 0
+# was:	li	_let_x_I2_39_, 0
+	addi	x18, x18, 4
+# was:	addi	_arr_40_, _arr_40_, 4
+	mv	x13, x0
+# was:	mv	_ind_var_42_, x0
+l.loop_beg_44_:
+	bge	x13, x10, l.loop_end_45_
+# was:	bge	_ind_var_42_, _size_41_, l.loop_end_45_
+	lw	x12, 0(x18)
+# was:	lw	_tmp_43_, 0(_arr_40_)
+	addi	x18, x18, 4
+# was:	addi	_arr_40_, _arr_40_, 4
+# 	mv	_plus_L_47_,_let_x_I2_39_
+# 	mv	_plus_R_48_,_tmp_43_
+	add	x11, x11, x12
+# was:	add	_fun_arg_res_46_, _plus_L_47_, _plus_R_48_
+# 	mv	_let_x_I2_39_,_fun_arg_res_46_
+	addi	x13, x13, 1
+# was:	addi	_ind_var_42_, _ind_var_42_, 1
+	j	l.loop_beg_44_
+l.loop_end_45_:
+# 	mv	_let_x_49_,_let_x_I2_39_
+# 	mv	_tmp_50_,_let_x_49_
+	mv	x18, x11
+# was:	mv	_mainres_1_, _tmp_50_
+	mv	x10, x18
+# was:	mv	x10, _mainres_1_
+	jal	p.putint
+# was:	jal	p.putint, x10
 	mv	x10, x18
 # was:	mv	x10, _mainres_1_
 	addi	x2, x2, 28
@@ -223,6 +264,10 @@ m.BadIndex:
 m.DivZero:
 	.asciz	"division by zero"
 # String literals (including lengths) from program
+	.align	2
+s.X_38_:
+	.word	1
+	.ascii	"\n"
 	.align	2
 s.true:
 	.word	4

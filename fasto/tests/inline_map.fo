@@ -13,7 +13,7 @@ fun [int] boo([int] a) = let x = (let y = 5 + 3 in map(plus5, a)) in x
 fun [int] main() =
   let N = read(int) in
   let z = iota(N) in
-  let q = (let z = N + N in N + N + N) in
+  let q = (let z1 = N + N in N + N + N) in
   let y = boo(z) in
   let w = map(mul2, y) in
   write_int_arr(w)

@@ -6,14 +6,24 @@
 # Function main
 f.main:
 	sw	x1, -4(x2)
-	addi	x2, x2, -4
+	sw	x18, -8(x2)
+	addi	x2, x2, -8
 	jal	p.getint
 # was:	jal	p.getint, 
 # 	mv	_let_a_2_,x10
 	li	x10, 0
-# was:	li	_mainres_1_, 0
-# 	mv	x10,_mainres_1_
-	addi	x2, x2, 4
+# was:	li	_let_b_3_, 0
+# 	mv	_tmp_4_,_let_b_3_
+	mv	x18, x10
+# was:	mv	_mainres_1_, _tmp_4_
+	mv	x10, x18
+# was:	mv	x10, _mainres_1_
+	jal	p.putint
+# was:	jal	p.putint, x10
+	mv	x10, x18
+# was:	mv	x10, _mainres_1_
+	addi	x2, x2, 8
+	lw	x18, -8(x2)
 	lw	x1, -4(x2)
 	jr	x1
 # Library functions in Fasto namespace

@@ -6,21 +6,189 @@
 # Function main
 f.main:
 	sw	x1, -4(x2)
-	addi	x2, x2, -4
+	sw	x23, -28(x2)
+	sw	x22, -24(x2)
+	sw	x21, -20(x2)
+	sw	x20, -16(x2)
+	sw	x19, -12(x2)
+	sw	x18, -8(x2)
+	addi	x2, x2, -28
 	jal	p.getint
 # was:	jal	p.getint, 
+# 	mv	_let_N_2_,x10
 	mv	x11, x10
-# was:	mv	_let_N_2_, x10
-# 	mv	_plus_L_5_,_let_N_2_
-	mv	x10, x11
-# was:	mv	_plus_R_6_, _let_N_2_
-	add	x10, x11, x10
-# was:	add	_plus_L_3_, _plus_L_5_, _plus_R_6_
-# 	mv	_plus_R_4_,_let_N_2_
-	add	x10, x10, x11
-# was:	add	_mainres_1_, _plus_L_3_, _plus_R_4_
-# 	mv	x10,_mainres_1_
-	addi	x2, x2, 4
+# was:	mv	_size_4_, _let_N_2_
+	bge	x11, x0, l.safe_5_
+# was:	bge	_size_4_, x0, l.safe_5_
+	li	x10, 15
+# was:	li	x10, 15
+	la	x11, m.BadSize
+# was:	la	x11, m.BadSize
+	j	p.RuntimeError
+l.safe_5_:
+	mv	x10, x3
+# was:	mv	_let_z_3_, x3
+	slli	x12, x11, 2
+# was:	slli	_tmp_10_, _size_4_, 2
+	addi	x12, x12, 4
+# was:	addi	_tmp_10_, _tmp_10_, 4
+	add	x3, x3, x12
+# was:	add	x3, x3, _tmp_10_
+	sw	x11, 0(x10)
+# was:	sw	_size_4_, 0(_let_z_3_)
+	addi	x13, x10, 4
+# was:	addi	_addr_6_, _let_z_3_, 4
+	mv	x12, x0
+# was:	mv	_i_7_, x0
+l.loop_beg_8_:
+	bge	x12, x11, l.loop_end_9_
+# was:	bge	_i_7_, _size_4_, l.loop_end_9_
+	sw	x12, 0(x13)
+# was:	sw	_i_7_, 0(_addr_6_)
+	addi	x13, x13, 4
+# was:	addi	_addr_6_, _addr_6_, 4
+	addi	x12, x12, 1
+# was:	addi	_i_7_, _i_7_, 1
+	j	l.loop_beg_8_
+l.loop_end_9_:
+# 	mv	_let_a_I3_12_,_let_z_3_
+# 	mv	_let_a_13_,_let_a_I3_12_
+# 	mv	_arr_16_,_let_a_13_
+	lw	x13, 0(x10)
+# was:	lw	_size_15_, 0(_arr_16_)
+	mv	x12, x3
+# was:	mv	_let_x_14_, x3
+	slli	x11, x13, 2
+# was:	slli	_tmp_26_, _size_15_, 2
+	addi	x11, x11, 4
+# was:	addi	_tmp_26_, _tmp_26_, 4
+	add	x3, x3, x11
+# was:	add	x3, x3, _tmp_26_
+	sw	x13, 0(x12)
+# was:	sw	_size_15_, 0(_let_x_14_)
+	addi	x11, x12, 4
+# was:	addi	_addrg_19_, _let_x_14_, 4
+	mv	x14, x0
+# was:	mv	_i_20_, x0
+	addi	x15, x10, 4
+# was:	addi	_elem_17_, _arr_16_, 4
+l.loop_beg_21_:
+	bge	x14, x13, l.loop_end_22_
+# was:	bge	_i_20_, _size_15_, l.loop_end_22_
+	lw	x10, 0(x15)
+# was:	lw	_res_18_, 0(_elem_17_)
+	addi	x15, x15, 4
+# was:	addi	_elem_17_, _elem_17_, 4
+	mv	x16, x10
+# was:	mv	_plus_L_24_, _res_18_
+	li	x10, 5
+# was:	li	_plus_R_25_, 5
+	add	x10, x16, x10
+# was:	add	_fun_arg_res_23_, _plus_L_24_, _plus_R_25_
+# 	mv	_res_18_,_fun_arg_res_23_
+	sw	x10, 0(x11)
+# was:	sw	_res_18_, 0(_addrg_19_)
+	addi	x11, x11, 4
+# was:	addi	_addrg_19_, _addrg_19_, 4
+	addi	x14, x14, 1
+# was:	addi	_i_20_, _i_20_, 1
+	j	l.loop_beg_21_
+l.loop_end_22_:
+	mv	x10, x12
+# was:	mv	_let_y_11_, _let_x_14_
+# 	mv	_arr_29_,_let_y_11_
+	lw	x13, 0(x10)
+# was:	lw	_size_28_, 0(_arr_29_)
+	mv	x12, x3
+# was:	mv	_let_w_27_, x3
+	slli	x11, x13, 2
+# was:	slli	_tmp_39_, _size_28_, 2
+	addi	x11, x11, 4
+# was:	addi	_tmp_39_, _tmp_39_, 4
+	add	x3, x3, x11
+# was:	add	x3, x3, _tmp_39_
+	sw	x13, 0(x12)
+# was:	sw	_size_28_, 0(_let_w_27_)
+	addi	x11, x12, 4
+# was:	addi	_addrg_32_, _let_w_27_, 4
+	mv	x14, x0
+# was:	mv	_i_33_, x0
+	addi	x15, x10, 4
+# was:	addi	_elem_30_, _arr_29_, 4
+l.loop_beg_34_:
+	bge	x14, x13, l.loop_end_35_
+# was:	bge	_i_33_, _size_28_, l.loop_end_35_
+	lw	x10, 0(x15)
+# was:	lw	_res_31_, 0(_elem_30_)
+	addi	x15, x15, 4
+# was:	addi	_elem_30_, _elem_30_, 4
+	mv	x16, x10
+# was:	mv	_plus_L_37_, _res_31_
+# 	mv	_plus_R_38_,_res_31_
+	add	x10, x16, x10
+# was:	add	_fun_arg_res_36_, _plus_L_37_, _plus_R_38_
+# 	mv	_res_31_,_fun_arg_res_36_
+	sw	x10, 0(x11)
+# was:	sw	_res_31_, 0(_addrg_32_)
+	addi	x11, x11, 4
+# was:	addi	_addrg_32_, _addrg_32_, 4
+	addi	x14, x14, 1
+# was:	addi	_i_33_, _i_33_, 1
+	j	l.loop_beg_34_
+l.loop_end_35_:
+# 	mv	_let_x_I4_40_,_let_w_27_
+	mv	x10, x12
+# was:	mv	_let_x_41_, _let_x_I4_40_
+# 	mv	_arr_43_,_let_x_41_
+	lw	x19, 0(x10)
+# was:	lw	_size_42_, 0(_arr_43_)
+	mv	x18, x3
+# was:	mv	_mainres_1_, x3
+	slli	x11, x19, 2
+# was:	slli	_tmp_52_, _size_42_, 2
+	addi	x11, x11, 4
+# was:	addi	_tmp_52_, _tmp_52_, 4
+	add	x3, x3, x11
+# was:	add	x3, x3, _tmp_52_
+	sw	x19, 0(x18)
+# was:	sw	_size_42_, 0(_mainres_1_)
+	addi	x20, x18, 4
+# was:	addi	_addrg_46_, _mainres_1_, 4
+	mv	x21, x0
+# was:	mv	_i_47_, x0
+	addi	x22, x10, 4
+# was:	addi	_elem_44_, _arr_43_, 4
+l.loop_beg_48_:
+	bge	x21, x19, l.loop_end_49_
+# was:	bge	_i_47_, _size_42_, l.loop_end_49_
+	lw	x23, 0(x22)
+# was:	lw	_res_45_, 0(_elem_44_)
+	addi	x22, x22, 4
+# was:	addi	_elem_44_, _elem_44_, 4
+# 	mv	_tmp_51_,_res_45_
+# 	mv	_fun_arg_res_50_,_tmp_51_
+	mv	x10, x23
+# was:	mv	x10, _fun_arg_res_50_
+	jal	p.putint
+# was:	jal	p.putint, x10
+# 	mv	_res_45_,_fun_arg_res_50_
+	sw	x23, 0(x20)
+# was:	sw	_res_45_, 0(_addrg_46_)
+	addi	x20, x20, 4
+# was:	addi	_addrg_46_, _addrg_46_, 4
+	addi	x21, x21, 1
+# was:	addi	_i_47_, _i_47_, 1
+	j	l.loop_beg_48_
+l.loop_end_49_:
+	mv	x10, x18
+# was:	mv	x10, _mainres_1_
+	addi	x2, x2, 28
+	lw	x23, -28(x2)
+	lw	x22, -24(x2)
+	lw	x21, -20(x2)
+	lw	x20, -16(x2)
+	lw	x19, -12(x2)
+	lw	x18, -8(x2)
 	lw	x1, -4(x2)
 	jr	x1
 # Library functions in Fasto namespace
