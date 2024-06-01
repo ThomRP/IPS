@@ -1,0 +1,11 @@
+fun bool fun1(bool a, bool b) = not (a||b)
+fun bool fun2(bool a, bool b) = a && b || not(a)
+
+fun bool writeBool(bool n) = write(n)
+
+fun [bool] main() =
+  let a = {false, true} in
+  let b = scan(fun1, false, a) in
+  let c = scan(fun2, true, a) in
+  let tmp = map(writeBool, b) in
+  map(writeBool, c)

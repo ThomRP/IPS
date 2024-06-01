@@ -1,0 +1,7 @@
+fun bool fun1(int a) = 
+    if a == 3 then
+        true 
+    else false
+
+fun [int] main() =
+  filter(fun1, 3)

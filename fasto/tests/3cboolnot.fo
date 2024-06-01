@@ -1,0 +1,7 @@
+fun bool main() =
+  let n = read(int) in 
+    let x = write(not true)
+    in write(not false)
+
+
+

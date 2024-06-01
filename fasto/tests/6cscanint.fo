@@ -1,0 +1,16 @@
+fun int fun1(int a, int b) = ~(a - b/b)
+fun int fun2(int a, int b) = a - b * a
+
+fun int writeInt(int n) = write(n)
+
+fun [int] main() =
+  let a = {1, 2, 3} in
+  let b = scan(fun1, (0-10+12)/2, a) in
+  let c = scan(fun2, ~(0-1)*2, a) in
+  let d = scan(fun1, 1, {3}) in
+  let e1 = iota(0) in
+  let e = scan(fun1, 1, e1) in
+  let tmp = map(writeInt, b) in
+  let tmp2 = map(writeInt, c) in
+  let tmp3 = map(writeInt, d) in
+  map(writeInt,e)

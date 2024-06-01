@@ -1,0 +1,11 @@
+fun bool fun1([char] a) = 
+    let tmp = "a" in
+    if a[0] == tmp[0] then
+        true 
+    else false
+
+fun [char] writeChar([char] n) = write(n)
+
+fun [[char]] main() =
+  let a = filter(fun1, {"ant", "bear", "cat"}) in
+  map(writeChar, a)

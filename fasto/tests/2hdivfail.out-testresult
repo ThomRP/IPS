@@ -1,0 +1,1 @@
+Type error: Type mismatch in 2nd argument of binary operator: expected int, but got [int] at line 2, column 4

@@ -1,0 +1,5 @@
+fun bool fun1(bool a) = 
+    a
+
+fun [bool] main() =
+  filter(fun1, true)

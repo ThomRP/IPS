@@ -1,0 +1,19 @@
+fun int incr(int a, int b) = a + b
+fun bool orfun(bool a, bool b) = a || b
+fun [int] fun1([int] a, [int] b) = let c = {a[0]+b[0],a[1]+b[1],a[2]+b[2]} in c
+fun [bool] fun2([bool] a, [bool] b) = let c = {a[0]||b[0],a[1]||b[1],a[2]||b[2]} in c
+
+fun [[int]] main() =
+  let a1 = {{1,2,3}, {1,2,3}, {1,2,3}} in
+  let x1 = scan(fun1, {1,2,3}, a1) in
+  let tmp1 = write(reduce(incr, 0, x1[0])) in
+  let tmp2 = write(reduce(incr, 0, x1[1])) in
+  let tmp3 = write(reduce(incr, 0, x1[2])) in
+  let a2 = {{false,false,false}, {true,false,false}, {false,false,false}} in
+  let x2 = scan(fun2, {false,false,false}, a2) in
+  let tmp1 = write(reduce(orfun, false, x2[0])) in
+  let tmp2 = write(reduce(orfun, false, x2[1])) in
+  let tmp3 = write(reduce(orfun, false, x2[2])) in
+  x1
+
+

@@ -1,0 +1,2 @@
+fun int main() =
+  let n = read(int) in let y = 0-n in write(y/(0-3))
