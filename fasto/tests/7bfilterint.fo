@@ -1,0 +1,15 @@
+fun bool fun1(int a) = 
+    if a == 3 then
+        true 
+    else false
+
+fun int writeInt(int n) = write(n)
+
+fun [int] main() =
+  let a = filter(fun1, {1+5/2, ~(0-2)*2, 3}) in
+  let tmp = map(writeInt, a) in 
+  let b = filter(fun1, {1}) in
+  let tmp = map(writeInt, b) in 
+  let c = iota(0) in
+  let c1 = filter(fun1,c) in
+  map(writeInt, b)

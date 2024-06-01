@@ -1,0 +1,1 @@
+Type error: Type mismatch in function body: expected int, but got [char] at line 1, column 8

@@ -1,0 +1,2 @@
+fun int main() =
+  let n = read(int) in let y = n*n*n in write((0-y)*1*2*3*4)

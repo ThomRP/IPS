@@ -1,0 +1,2 @@
+fun int main() =
+  let n = read(int) in let y = (3+3)/n*(3-2) in write((4-3)/y*(4+2))

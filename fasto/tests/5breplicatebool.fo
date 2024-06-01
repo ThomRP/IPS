@@ -1,0 +1,9 @@
+fun bool writeBool(bool b) = write(b)
+
+fun [bool] main() =
+  let fs = replicate(1*2/1, false) in
+  let fsb = replicate(0+2, true) in
+  let fsc = replicate(4-2,not (true && false) || false) in 
+  let tmp = map(writeBool, fs) in 
+  let tmp = map(writeBool, fsb) in 
+  map(writeBool, fsc)

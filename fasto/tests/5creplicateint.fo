@@ -1,0 +1,11 @@
+fun int writeInt(int b) = write(b)
+
+fun [int] main() =
+  let fs = replicate((2+10)/6, 2+10/2) in
+  let fsb = replicate(~(0-2), 0) in
+  let fsc = replicate(2*2, 0-2/2) in
+  let fsd = replicate(0,2) in
+  let tmp1 = map(writeInt, fs) in 
+  let tmp2 = map(writeInt, fsb) in 
+  let tmp3 = map(writeInt, fsc) in 
+  map(writeInt,fsd)

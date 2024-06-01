@@ -1,0 +1,1 @@
+Type error: Type mismatch in arguments of == : expected equal types, but got char and [char] at line 2, column 10

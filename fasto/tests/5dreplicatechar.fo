@@ -1,0 +1,9 @@
+
+fun int main() =
+  let a = replicate(2, "a") in
+  let tmp = write(a[0]) in
+  let tmp = write(a[1]) in
+  let a = replicate(2, "b") in
+  let tmp = write(a[0]) in
+  let tmp = write(a[1]) in
+  0

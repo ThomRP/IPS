@@ -1,0 +1,5 @@
+fun [char] fun1(int a) = 
+    "b"
+
+fun [int] main() =
+  filter(fun1, {1+5/2, ~(0-2)*2, 3})

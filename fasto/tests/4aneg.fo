@@ -1,0 +1,5 @@
+fun int main() =
+  let n = read(int) in 
+    let x1 = write(~n) in
+    let x2 = write(~~n) in
+    0

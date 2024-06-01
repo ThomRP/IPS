@@ -1,0 +1,33 @@
+fun bool fun1([[char]] a) = 
+    let tmp = a[0] in
+    let tmp1 = "h" in
+    if tmp[0] == tmp1[0] then
+        true
+    else false
+
+fun bool fun2([int] a) = 
+    if 36 == reduce(incr,0,a) then
+        true
+    else false
+
+fun int incr(int a, int b) =
+    a+b
+    
+fun bool fun3([bool] a) = 
+    a[0]
+
+fun int main() =
+  let a = filter(fun1, {{"ant", "bear", "cat"},{"hello", "world"}}) in
+  let tmp1 = a[0] in
+  let tmp2 = write(tmp1[0]) in
+  let tmp2b = write(tmp1[1]) in 
+  let tmp3 = filter(fun3, {{true,false,false},{false,true,true}}) in
+  let tmp3b = tmp3[0] in
+  let tmp3c = write(tmp3b[0]) in
+  let tmp3c = write(tmp3b[1]) in
+  let tmp3c = write(tmp3b[2]) in
+  let tmp4 = filter(fun2, {{1,2,3},{10,20,6}}) in
+  let b = reduce(incr,0,tmp4[0]) in
+  write(b)
+
+

@@ -1,0 +1,7 @@
+fun char fun1(char a) = 
+    if a == "a" then
+        true 
+    else false
+
+fun [char] main() =
+  filter(fun1, "a")

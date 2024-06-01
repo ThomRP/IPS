@@ -1,0 +1,12 @@
+fun bool main() =
+  let n = read(int) in 
+    let x1 = write(true && false) in 
+    let x2 = write(false && true) in  
+    let x3 = write(true && true) in
+    let x4 = write(false && false) in    
+    let y1 = write(true || false) in 
+    let y2 = write(false || true) in  
+    let y3 = write(true || true) in
+    let y4 = write(false || false) in true
+
+

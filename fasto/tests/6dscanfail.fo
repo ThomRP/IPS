@@ -1,0 +1,5 @@
+fun int fun1([char] a, int b) = b
+
+fun [int] main() =
+  let a = {1, 2, 3} in
+  scan(fun1, "a", a)

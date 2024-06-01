@@ -388,7 +388,7 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
             match checkFunArg ftab vtab pos f with
             | (f', res, [ a1; a2 ]) ->
                 if a1 <> a2 then
-                    reportTypesDifferent "argument types of operation in scan" a1 a2 pos
+                    reportTypesDifferent "argument types of operation in scan" a1 a2 pos //????
 
                 if res <> a1 then
                     reportTypesDifferent "argument and return type of operation in scan" a1 res pos

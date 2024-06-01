@@ -665,7 +665,7 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
               ADDI(arr_reg, arr_reg, elemSizeToInt elem_size) ]
         (* place := binop(place, tmp_reg) *)
         let apply_code =
-            applyFunArg (binop, [ tmp1_reg; tmp2_reg ], vtable, tmp2_reg, pos)
+            applyFunArg (binop, [ tmp2_reg; tmp1_reg ], vtable, tmp2_reg, pos)
             @ [ Store elem_size (tmp2_reg, addr_reg, 0)
                 ADDI(addr_reg, addr_reg, elemSizeToInt elem_size) ]
 
