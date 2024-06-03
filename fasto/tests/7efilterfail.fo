@@ -1,0 +1,8 @@
+fun int fun1(int a) = 
+    a
+
+fun int writeInt(int n) = write(n)
+
+fun [int] main() =
+  let a = (filter(fun1, {1+5/2, ~(0-2)*2, 3})) in
+  map(writeInt, a)

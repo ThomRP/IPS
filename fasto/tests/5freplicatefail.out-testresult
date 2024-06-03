@@ -1,1 +1,1 @@
-Type error: Type mismatch in argument of replicate: expected int, but got [char] at line 2, column 3
+Type error: Type mismatch in argument 1 of replicate: expected int, but got [char] at line 2, column 3
