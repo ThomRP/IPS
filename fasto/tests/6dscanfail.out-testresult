@@ -1,1 +1,1 @@
-Type error: Type mismatch in helo: expected equal types, but got [char] and int at line 5, column 3
+Type error: Type mismatch in argument types of operation in scan: expected equal types, but got [char] and int at line 5, column 3

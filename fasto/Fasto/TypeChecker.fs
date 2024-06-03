@@ -352,9 +352,11 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
         let (a_type, a_exp_dec) = checkExp ftab vtab a_exp
 
         if n_type <> Int then
-            reportTypeWrong "argument of replicate" Int n_type pos
+            reportTypeWrong "argument 1 of replicate" Int n_type pos
 
         (Array a_type, Replicate(n_exp_dec, a_exp_dec, a_type, pos))
+
+
 
     | Filter(f, arr_exp, _, pos) ->
         let (arr_type, arr_exp_dec) = checkExp ftab vtab arr_exp
@@ -367,7 +369,7 @@ and checkExp (ftab: FunTable) (vtab: VarTable) (exp: UntypedExp) : (Type * Typed
 
         let (f', f_res_type, f_arg_type) =
             match checkFunArg ftab vtab pos f with
-            | (f', res, [ a1 ]) -> (f', Bool, a1)
+            | (f', Bool, [ a1 ]) -> (f', Bool, a1)
             | (_, res, args) -> reportArityWrong "first argument of filter" 1 (args, res) pos
 
         if elem_type <> f_arg_type then

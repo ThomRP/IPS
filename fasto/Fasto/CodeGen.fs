@@ -569,10 +569,6 @@ let rec compileExp (e: TypedExp) (vtable: VarTable) (place: reg) : Instruction l
                   J loop_beg
                   LABEL loop_end ]
 
-
-
-
-
         n_code
         @ a_code
         @ checksize
